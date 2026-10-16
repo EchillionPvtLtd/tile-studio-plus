@@ -1,0 +1,2232 @@
+{
+ "limits": {
+  "surface": {
+   "floor": {
+    "area": 0.04,
+    "solid": 0.85,
+    "sure": 0.7,
+    "unsure": 0.2,
+    "edge": 0.4,
+    "strong": 0.5
+   },
+   "wall": {
+    "area": 0.04,
+    "solid": 0.85,
+    "sure": 0.65,
+    "unsure": 0.25,
+    "edge": 0.3,
+    "strong": 0.5,
+    "flips": 0.2,
+    "gaps": 0.1
+   }
+  },
+  "areaSqFt": {
+   "floor": [
+    4.0,
+    1500.0
+   ],
+   "wall": [
+    3.0,
+    1200.0
+   ]
+  },
+  "maxFloorTilt": 14.0,
+  "maxFloorFlat": 0.45,
+  "maxPlaneResid": 1.6,
+  "floorFadeMm": [
+   9000.0,
+   15000.0
+  ],
+  "wallFadeMm": [
+   16000.0,
+   20000.0
+  ],
+  "wallFadeDeg": [
+   6.0,
+   12.0
+  ]
+ },
+ "rooms": {
+  "lv-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.397,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.008,
+     "edge": 0.946,
+     "strong": 0.99
+    },
+    "wall-right": {
+     "area": 0.136,
+     "solid": 1.0,
+     "sure": 0.968,
+     "unsure": 0.021,
+     "edge": 0.693,
+     "strong": 0.962,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-right-2": {
+     "area": 0.081,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.004,
+     "edge": 0.992,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.206,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.007,
+     "edge": 0.896,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.546,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.007,
+     "edge": 0.775,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.247,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.006,
+     "edge": 0.766,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.252,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.006,
+     "edge": 0.586,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.194,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.004,
+     "edge": 0.856,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.118,
+     "solid": 1.0,
+     "sure": 0.997,
+     "unsure": 0.001,
+     "edge": 0.537,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.312,
+     "solid": 1.0,
+     "sure": 0.958,
+     "unsure": 0.037,
+     "edge": 0.634,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.002
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.174,
+     "solid": 1.0,
+     "sure": 0.987,
+     "unsure": 0.005,
+     "edge": 1.0,
+     "strong": 0.999
+    },
+    "wall-right": {
+     "area": 0.122,
+     "solid": 1.0,
+     "sure": 0.992,
+     "unsure": 0.002,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.358,
+     "solid": 1.0,
+     "sure": 0.987,
+     "unsure": 0.005,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.182,
+     "solid": 1.0,
+     "sure": 0.993,
+     "unsure": 0.003,
+     "edge": 0.863,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.357,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.007,
+     "edge": 0.799,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the right",
+     "reasons": [
+      "the depth model does not see one flat wall here (its pixels lie 1.7 times further from the plane than they should)"
+     ]
+    }
+   ],
+   "notes": [
+    "8% of the photo is wall that stays as photographed"
+   ]
+  },
+  "lv-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.544,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.005,
+     "edge": 0.878,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Walls",
+     "reasons": [
+      "the walls could not be separated into flat planes that agree with the photo"
+     ]
+    }
+   ],
+   "notes": [
+    "11% of the photo is wall that stays as photographed"
+   ]
+  },
+  "lv-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.353,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.002,
+     "edge": 1.0,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.163,
+     "solid": 1.0,
+     "sure": 0.97,
+     "unsure": 0.017,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-right": {
+     "area": 0.115,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.005,
+     "edge": 1.0,
+     "strong": 0.723,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.131,
+     "solid": 1.0,
+     "sure": 0.968,
+     "unsure": 0.016,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.194,
+     "solid": 1.0,
+     "sure": 0.981,
+     "unsure": 0.009,
+     "edge": 0.88,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.416,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.003,
+     "edge": 0.644,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.012
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "lv-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.333,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.001,
+     "edge": 0.986,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.139,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.009,
+     "edge": 0.794,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.1,
+     "solid": 1.0,
+     "sure": 0.991,
+     "unsure": 0.005,
+     "edge": 0.643,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "3% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.231,
+     "solid": 1.0,
+     "sure": 0.971,
+     "unsure": 0.019,
+     "edge": 0.888,
+     "strong": 0.999
+    },
+    "wall-left": {
+     "area": 0.155,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.002,
+     "edge": 0.713,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.012
+    },
+    "wall-back-2": {
+     "area": 0.236,
+     "solid": 1.0,
+     "sure": 0.992,
+     "unsure": 0.001,
+     "edge": 0.972,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.001
+    },
+    "wall-back": {
+     "area": 0.075,
+     "solid": 1.0,
+     "sure": 0.98,
+     "unsure": 0.005,
+     "edge": 0.833,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.021
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "5% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.164,
+     "solid": 1.0,
+     "sure": 0.978,
+     "unsure": 0.013,
+     "edge": 0.97,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.605,
+     "solid": 1.0,
+     "sure": 0.997,
+     "unsure": 0.001,
+     "edge": 0.984,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.027
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "dr-03": {
+   "surfaces": {},
+   "skipped": [
+    {
+     "surface": "Floor and walls",
+     "reasons": [
+      "a photograph taken from straight above: the table and chairs sit on a shaggy rug that hides the floor, and nothing is a wall (decided by looking at the photo)"
+     ]
+    }
+   ],
+   "notes": [
+    "51% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.181,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.002,
+     "edge": 0.964,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.424,
+     "solid": 1.0,
+     "sure": 0.987,
+     "unsure": 0.009,
+     "edge": 0.966,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.038
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "13% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.215,
+     "solid": 1.0,
+     "sure": 0.947,
+     "unsure": 0.042,
+     "edge": 0.941,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 3.9% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": [
+    "6% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.322,
+     "solid": 1.0,
+     "sure": 0.97,
+     "unsure": 0.017,
+     "edge": 0.871,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.186,
+     "solid": 1.0,
+     "sure": 0.981,
+     "unsure": 0.015,
+     "edge": 0.965,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.001
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "5% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.208,
+     "solid": 1.0,
+     "sure": 0.971,
+     "unsure": 0.02,
+     "edge": 0.978,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.578,
+     "solid": 1.0,
+     "sure": 0.992,
+     "unsure": 0.005,
+     "edge": 0.97,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.014
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "dr-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.379,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.008,
+     "edge": 0.912,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.099,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.005,
+     "edge": 0.423,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.084
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "3% of the photo is wall that stays as photographed"
+   ]
+  },
+  "dr-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.201,
+     "solid": 1.0,
+     "sure": 0.966,
+     "unsure": 0.019,
+     "edge": 0.871,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.512,
+     "solid": 1.0,
+     "sure": 0.992,
+     "unsure": 0.004,
+     "edge": 0.8,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.037
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "dr-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.391,
+     "solid": 1.0,
+     "sure": 0.995,
+     "unsure": 0.003,
+     "edge": 0.935,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 2.4% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": [
+    "4% of the photo is wall that stays as photographed"
+   ]
+  },
+  "kn-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.17,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.005,
+     "edge": 0.994,
+     "strong": 0.997
+    },
+    "wall-left": {
+     "area": 0.05,
+     "solid": 1.0,
+     "sure": 0.918,
+     "unsure": 0.047,
+     "edge": 0.752,
+     "strong": 0.893,
+     "flips": 0.0,
+     "gaps": 0.008
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "only 2.8% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": [
+    "7% of the photo is wall that stays as photographed"
+   ]
+  },
+  "kn-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.2,
+     "solid": 1.0,
+     "sure": 0.95,
+     "unsure": 0.039,
+     "edge": 0.923,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.178,
+     "solid": 1.0,
+     "sure": 0.928,
+     "unsure": 0.058,
+     "edge": 0.798,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.044
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 2.9% of the photo is visible wall: too little to tile convincingly"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 1.2% of the photo is visible wall: too little to tile convincingly",
+      "the outline of the wall runs through flat areas of the photo (3% of it follows an edge)"
+     ]
+    }
+   ],
+   "notes": [
+    "8% of the photo is wall that stays as photographed"
+   ]
+  },
+  "kn-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.261,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.008,
+     "edge": 0.926,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.041,
+     "solid": 1.0,
+     "sure": 0.924,
+     "unsure": 0.03,
+     "edge": 0.957,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.035
+    },
+    "wall-back": {
+     "area": 0.066,
+     "solid": 1.0,
+     "sure": 0.893,
+     "unsure": 0.062,
+     "edge": 0.897,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "kn-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.176,
+     "solid": 1.0,
+     "sure": 0.977,
+     "unsure": 0.008,
+     "edge": 0.882,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.057,
+     "solid": 1.0,
+     "sure": 0.969,
+     "unsure": 0.013,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (22% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    }
+   ],
+   "notes": [
+    "13% of the photo is wall that stays as photographed"
+   ]
+  },
+  "kn-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.211,
+     "solid": 1.0,
+     "sure": 0.979,
+     "unsure": 0.009,
+     "edge": 0.923,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.052,
+     "solid": 1.0,
+     "sure": 0.91,
+     "unsure": 0.037,
+     "edge": 0.941,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.001
+    },
+    "wall-back": {
+     "area": 0.064,
+     "solid": 1.0,
+     "sure": 0.888,
+     "unsure": 0.064,
+     "edge": 0.909,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "kn-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.313,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.007,
+     "edge": 0.955,
+     "strong": 0.999
+    },
+    "wall-right": {
+     "area": 0.055,
+     "solid": 1.0,
+     "sure": 0.952,
+     "unsure": 0.023,
+     "edge": 0.445,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 2.0% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": []
+  },
+  "kn-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.234,
+     "solid": 1.0,
+     "sure": 0.963,
+     "unsure": 0.026,
+     "edge": 0.981,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.116,
+     "solid": 1.0,
+     "sure": 0.96,
+     "unsure": 0.029,
+     "edge": 0.58,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.005
+    },
+    "wall-back": {
+     "area": 0.048,
+     "solid": 1.0,
+     "sure": 0.958,
+     "unsure": 0.01,
+     "edge": 0.674,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "kn-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.296,
+     "solid": 1.0,
+     "sure": 0.976,
+     "unsure": 0.016,
+     "edge": 0.932,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.087,
+     "solid": 1.0,
+     "sure": 0.961,
+     "unsure": 0.029,
+     "edge": 0.716,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.234,
+     "solid": 1.0,
+     "sure": 0.961,
+     "unsure": 0.03,
+     "edge": 0.834,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.032
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "kn-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.335,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.007,
+     "edge": 0.993,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.136,
+     "solid": 1.0,
+     "sure": 0.961,
+     "unsure": 0.031,
+     "edge": 0.872,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "kn-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.245,
+     "solid": 1.0,
+     "sure": 0.974,
+     "unsure": 0.016,
+     "edge": 0.735,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.056,
+     "solid": 1.0,
+     "sure": 0.858,
+     "unsure": 0.152,
+     "edge": 0.918,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "only 3.9% of the photo is visible wall: too little to tile convincingly",
+      "there are holes in the middle of the wall that nothing explains (10% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "the depth model does not see one flat wall here (its pixels lie 3.1 times further from the plane than they should)"
+     ]
+    }
+   ],
+   "notes": [
+    "20% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.157,
+     "solid": 1.0,
+     "sure": 0.978,
+     "unsure": 0.01,
+     "edge": 0.972,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "the outline of the wall runs through flat areas of the photo (24% of it follows an edge)"
+     ]
+    }
+   ],
+   "notes": [
+    "42% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.268,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.003,
+     "edge": 1.0,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.13,
+     "solid": 1.0,
+     "sure": 0.996,
+     "unsure": 0.001,
+     "edge": 0.667,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-left": {
+     "area": 0.063,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.009,
+     "edge": 0.78,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.242,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.013,
+     "edge": 0.964,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "bd-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.27,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.002,
+     "edge": 0.8,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.08,
+     "solid": 1.0,
+     "sure": 0.964,
+     "unsure": 0.023,
+     "edge": 0.965,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (13% of the wall inside its outline), where a tile would stop for no reason",
+      "the depth model does not see one flat wall here (its pixels lie 1.8 times further from the plane than they should)"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 2.0% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": [
+    "14% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.227,
+     "solid": 1.0,
+     "sure": 0.977,
+     "unsure": 0.005,
+     "edge": 0.921,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.16,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.005,
+     "edge": 0.76,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.016
+    },
+    "wall-back": {
+     "area": 0.158,
+     "solid": 1.0,
+     "sure": 0.976,
+     "unsure": 0.012,
+     "edge": 0.746,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.048
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "6% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.216,
+     "solid": 1.0,
+     "sure": 0.979,
+     "unsure": 0.007,
+     "edge": 0.635,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.256,
+     "solid": 1.0,
+     "sure": 0.974,
+     "unsure": 0.01,
+     "edge": 0.677,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.005
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "the outline of the wall runs through flat areas of the photo (18% of it follows an edge)"
+     ]
+    }
+   ],
+   "notes": [
+    "13% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.192,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.008,
+     "edge": 0.61,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.239,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.008,
+     "edge": 0.948,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.033
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "4% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.24,
+     "solid": 1.0,
+     "sure": 0.784,
+     "unsure": 0.008,
+     "edge": 0.888,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.047,
+     "solid": 1.0,
+     "sure": 0.965,
+     "unsure": 0.012,
+     "edge": 0.343,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.008
+    },
+    "wall-back": {
+     "area": 0.162,
+     "solid": 1.0,
+     "sure": 0.965,
+     "unsure": 0.023,
+     "edge": 0.727,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.001
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "6% of the photo is wall that stays as photographed"
+   ]
+  },
+  "bd-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.179,
+     "solid": 1.0,
+     "sure": 0.971,
+     "unsure": 0.016,
+     "edge": 0.795,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.127,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.014,
+     "edge": 0.316,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.021
+    },
+    "wall-back": {
+     "area": 0.363,
+     "solid": 1.0,
+     "sure": 0.99,
+     "unsure": 0.005,
+     "edge": 0.895,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.024
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "bd-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.263,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.003,
+     "edge": 0.945,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.046,
+     "solid": 1.0,
+     "sure": 0.927,
+     "unsure": 0.013,
+     "edge": 0.842,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.118,
+     "solid": 1.0,
+     "sure": 0.962,
+     "unsure": 0.013,
+     "edge": 0.708,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.012
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "bd-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.371,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.003,
+     "edge": 0.971,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.129,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.004,
+     "edge": 0.645,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.033
+    },
+    "wall-back": {
+     "area": 0.097,
+     "solid": 1.0,
+     "sure": 0.932,
+     "unsure": 0.031,
+     "edge": 0.851,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.014
+    },
+    "wall-back-2": {
+     "area": 0.056,
+     "solid": 1.0,
+     "sure": 0.929,
+     "unsure": 0.018,
+     "edge": 0.985,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.003
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.171,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.005,
+     "edge": 0.438,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.098,
+     "solid": 1.0,
+     "sure": 0.957,
+     "unsure": 0.027,
+     "edge": 0.797,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.104,
+     "solid": 1.0,
+     "sure": 0.977,
+     "unsure": 0.015,
+     "edge": 0.83,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.205,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.001,
+     "edge": 0.661,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.355,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.005,
+     "edge": 0.41,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.005
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "15% of the photo is wall that stays as photographed"
+   ]
+  },
+  "br-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.085,
+     "solid": 1.0,
+     "sure": 0.981,
+     "unsure": 0.014,
+     "edge": 0.983,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.1,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.005,
+     "edge": 0.842,
+     "strong": 0.866,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.256,
+     "solid": 1.0,
+     "sure": 0.959,
+     "unsure": 0.021,
+     "edge": 0.678,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.31,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.002,
+     "edge": 0.688,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.188,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.007,
+     "edge": 0.816,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.056
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.212,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.004,
+     "edge": 0.706,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.174,
+     "solid": 1.0,
+     "sure": 0.979,
+     "unsure": 0.017,
+     "edge": 0.886,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.011
+    },
+    "wall-back": {
+     "area": 0.24,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.009,
+     "edge": 0.825,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.008
+    },
+    "wall-back-2": {
+     "area": 0.17,
+     "solid": 1.0,
+     "sure": 0.996,
+     "unsure": 0.001,
+     "edge": 0.485,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.018
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.171,
+     "solid": 1.0,
+     "sure": 0.981,
+     "unsure": 0.008,
+     "edge": 0.885,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.114,
+     "solid": 1.0,
+     "sure": 0.978,
+     "unsure": 0.01,
+     "edge": 0.995,
+     "strong": 0.81,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (20% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    }
+   ],
+   "notes": [
+    "16% of the photo is wall that stays as photographed"
+   ]
+  },
+  "br-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.131,
+     "solid": 1.0,
+     "sure": 0.972,
+     "unsure": 0.004,
+     "edge": 0.732,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.183,
+     "solid": 1.0,
+     "sure": 0.979,
+     "unsure": 0.015,
+     "edge": 0.802,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.008
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "28% of the photo is wall that stays as photographed"
+   ]
+  },
+  "br-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.239,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.004,
+     "edge": 0.783,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.088,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.001,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.467,
+     "solid": 1.0,
+     "sure": 0.967,
+     "unsure": 0.022,
+     "edge": 0.755,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.4,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.004,
+     "edge": 0.835,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.082,
+     "solid": 1.0,
+     "sure": 0.98,
+     "unsure": 0.011,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.262,
+     "solid": 1.0,
+     "sure": 0.977,
+     "unsure": 0.022,
+     "edge": 0.995,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "br-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.104,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.002,
+     "edge": 0.738,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.324,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.002,
+     "edge": 0.819,
+     "strong": 0.883,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-left": {
+     "area": 0.115,
+     "solid": 1.0,
+     "sure": 0.976,
+     "unsure": 0.017,
+     "edge": 0.715,
+     "strong": 0.656,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "8% of the photo is wall that stays as photographed"
+   ]
+  },
+  "by-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.288,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.01,
+     "edge": 0.989,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "much of it is far away or seen almost edge-on, where the perspective of a tile cannot be trusted"
+     ]
+    }
+   ],
+   "notes": [
+    "9% of the photo is wall that stays as photographed"
+   ]
+  },
+  "by-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.095,
+     "solid": 1.0,
+     "sure": 0.984,
+     "unsure": 0.006,
+     "edge": 1.0,
+     "strong": 1.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "no wall is visible in this photo"
+   ]
+  },
+  "by-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.211,
+     "solid": 1.0,
+     "sure": 1.0,
+     "unsure": 0.0,
+     "edge": 0.989,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Walls",
+     "reasons": [
+      "the walls could not be separated into flat planes that agree with the photo"
+     ]
+    }
+   ],
+   "notes": []
+  },
+  "by-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.13,
+     "solid": 1.0,
+     "sure": 0.998,
+     "unsure": 0.001,
+     "edge": 0.975,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.161,
+     "solid": 1.0,
+     "sure": 1.0,
+     "unsure": 0.0,
+     "edge": 0.978,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.003
+    },
+    "wall-back": {
+     "area": 0.261,
+     "solid": 1.0,
+     "sure": 0.989,
+     "unsure": 0.008,
+     "edge": 0.929,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "12% of the photo is wall that stays as photographed"
+   ]
+  },
+  "by-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.116,
+     "solid": 1.0,
+     "sure": 0.992,
+     "unsure": 0.003,
+     "edge": 0.95,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.144,
+     "solid": 1.0,
+     "sure": 0.993,
+     "unsure": 0.006,
+     "edge": 0.913,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the right",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (52% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (12% of the wall inside its outline), where a tile would stop for no reason",
+      "the depth model does not see one flat wall here (its pixels lie 2.9 times further from the plane than they should)"
+     ]
+    }
+   ],
+   "notes": [
+    "59% of the photo is wall that stays as photographed"
+   ]
+  },
+  "by-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.28,
+     "solid": 1.0,
+     "sure": 0.981,
+     "unsure": 0.01,
+     "edge": 0.648,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.066,
+     "solid": 1.0,
+     "sure": 0.976,
+     "unsure": 0.014,
+     "edge": 0.869,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.01
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (13% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    }
+   ],
+   "notes": [
+    "11% of the photo is wall that stays as photographed"
+   ]
+  },
+  "by-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.161,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.005,
+     "edge": 0.734,
+     "strong": 0.998
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Walls",
+     "reasons": [
+      "the walls could not be separated into flat planes that agree with the photo"
+     ]
+    }
+   ],
+   "notes": []
+  },
+  "by-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.087,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.002,
+     "edge": 0.889,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.13,
+     "solid": 1.0,
+     "sure": 0.999,
+     "unsure": 0.0,
+     "edge": 0.903,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.013
+    },
+    "wall-back": {
+     "area": 0.244,
+     "solid": 1.0,
+     "sure": 0.999,
+     "unsure": 0.0,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.001
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "by-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.194,
+     "solid": 1.0,
+     "sure": 0.98,
+     "unsure": 0.013,
+     "edge": 0.929,
+     "strong": 1.0
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Walls",
+     "reasons": [
+      "the walls could not be separated into flat planes that agree with the photo"
+     ]
+    }
+   ],
+   "notes": []
+  },
+  "by-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.12,
+     "solid": 1.0,
+     "sure": 0.998,
+     "unsure": 0.0,
+     "edge": 0.541,
+     "strong": 1.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "no wall is visible in this photo"
+   ]
+  },
+  "oe-01": {
+   "surfaces": {
+    "floor": {
+     "area": 0.204,
+     "solid": 1.0,
+     "sure": 0.971,
+     "unsure": 0.021,
+     "edge": 0.924,
+     "strong": 1.0
+    },
+    "wall-right": {
+     "area": 0.25,
+     "solid": 1.0,
+     "sure": 0.999,
+     "unsure": 0.0,
+     "edge": 0.945,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "oe-02": {
+   "surfaces": {
+    "floor": {
+     "area": 0.215,
+     "solid": 1.0,
+     "sure": 0.977,
+     "unsure": 0.011,
+     "edge": 1.0,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.069,
+     "solid": 1.0,
+     "sure": 0.986,
+     "unsure": 0.005,
+     "edge": 0.901,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.045
+    },
+    "wall-left-2": {
+     "area": 0.046,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.003,
+     "edge": 1.0,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.014
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 3.5% of the photo is visible wall: too little to tile convincingly"
+     ]
+    }
+   ],
+   "notes": [
+    "5% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-03": {
+   "surfaces": {
+    "floor": {
+     "area": 0.353,
+     "solid": 1.0,
+     "sure": 0.969,
+     "unsure": 0.021,
+     "edge": 0.992,
+     "strong": 0.99
+    },
+    "wall-right": {
+     "area": 0.053,
+     "solid": 1.0,
+     "sure": 0.941,
+     "unsure": 0.015,
+     "edge": 0.993,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.055,
+     "solid": 1.0,
+     "sure": 0.948,
+     "unsure": 0.05,
+     "edge": 0.845,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "5% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-04": {
+   "surfaces": {
+    "floor": {
+     "area": 0.33,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.006,
+     "edge": 0.994,
+     "strong": 0.948
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "too little of it is visible to tile convincingly"
+     ]
+    },
+    {
+     "surface": "Wall on the right",
+     "reasons": [
+      "most of the wall is far away or seen almost edge-on (0% of it can be tiled at full strength), where the perspective of a tile cannot be trusted and a tile would look washed out"
+     ]
+    },
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "the depth model does not see one flat wall here (its pixels lie 3.6 times further from the plane than they should)"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 3.1% of the photo is visible wall: too little to tile convincingly",
+      "the depth model does not see one flat wall here (its pixels lie 2.9 times further from the plane than they should)"
+     ]
+    }
+   ],
+   "notes": [
+    "12% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-05": {
+   "surfaces": {
+    "floor": {
+     "area": 0.344,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.004,
+     "edge": 0.957,
+     "strong": 0.963
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the left",
+     "reasons": [
+      "the depth model does not see one flat wall here (its pixels lie 3.1 times further from the plane than they should)"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "there are holes in the middle of the wall that nothing explains (13% of the wall inside its outline), where a tile would stop for no reason"
+     ]
+    }
+   ],
+   "notes": [
+    "10% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-06": {
+   "surfaces": {
+    "floor": {
+     "area": 0.246,
+     "solid": 1.0,
+     "sure": 0.968,
+     "unsure": 0.021,
+     "edge": 0.881,
+     "strong": 1.0
+    },
+    "wall-left": {
+     "area": 0.156,
+     "solid": 1.0,
+     "sure": 0.997,
+     "unsure": 0.001,
+     "edge": 0.842,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.024
+    },
+    "wall-back": {
+     "area": 0.105,
+     "solid": 1.0,
+     "sure": 0.96,
+     "unsure": 0.02,
+     "edge": 0.873,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.021
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "oe-07": {
+   "surfaces": {
+    "floor": {
+     "area": 0.385,
+     "solid": 1.0,
+     "sure": 0.978,
+     "unsure": 0.012,
+     "edge": 0.983,
+     "strong": 0.97
+    },
+    "wall-right": {
+     "area": 0.043,
+     "solid": 1.0,
+     "sure": 0.993,
+     "unsure": 0.003,
+     "edge": 0.911,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-left": {
+     "area": 0.067,
+     "solid": 1.0,
+     "sure": 0.994,
+     "unsure": 0.002,
+     "edge": 0.607,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    },
+    "wall-back": {
+     "area": 0.051,
+     "solid": 1.0,
+     "sure": 0.988,
+     "unsure": 0.006,
+     "edge": 0.9,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  },
+  "oe-08": {
+   "surfaces": {
+    "floor": {
+     "area": 0.348,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.004,
+     "edge": 0.963,
+     "strong": 0.983
+    }
+   },
+   "skipped": [
+    {
+     "surface": "Wall on the right",
+     "reasons": [
+      "only 1.4% of the photo is visible wall: too little to tile convincingly"
+     ]
+    },
+    {
+     "surface": "Wall ahead",
+     "reasons": [
+      "only 3.8% of the photo is visible wall: too little to tile convincingly",
+      "most of the wall is far away or seen almost edge-on (0% of it can be tiled at full strength), where the perspective of a tile cannot be trusted and a tile would look washed out"
+     ]
+    }
+   ],
+   "notes": [
+    "8% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-09": {
+   "surfaces": {
+    "floor": {
+     "area": 0.33,
+     "solid": 1.0,
+     "sure": 0.973,
+     "unsure": 0.015,
+     "edge": 0.918,
+     "strong": 1.0
+    },
+    "wall-back": {
+     "area": 0.217,
+     "solid": 1.0,
+     "sure": 0.982,
+     "unsure": 0.011,
+     "edge": 0.68,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.081
+    }
+   },
+   "skipped": [],
+   "notes": [
+    "15% of the photo is wall that stays as photographed"
+   ]
+  },
+  "oe-10": {
+   "surfaces": {
+    "floor": {
+     "area": 0.376,
+     "solid": 1.0,
+     "sure": 0.985,
+     "unsure": 0.005,
+     "edge": 0.967,
+     "strong": 0.991
+    },
+    "wall-right": {
+     "area": 0.067,
+     "solid": 1.0,
+     "sure": 0.98,
+     "unsure": 0.004,
+     "edge": 0.964,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.031
+    },
+    "wall-back": {
+     "area": 0.216,
+     "solid": 1.0,
+     "sure": 0.983,
+     "unsure": 0.012,
+     "edge": 0.984,
+     "strong": 1.0,
+     "flips": 0.0,
+     "gaps": 0.0
+    }
+   },
+   "skipped": [],
+   "notes": []
+  }
+ }
+}

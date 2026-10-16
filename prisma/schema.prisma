@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 String    @id @default(uuid())
+  email              String    @unique
+  password           String
+  role               String    @default("SHOP") // Changed from enum for SQLite compatibility
+  
+  // Shop customization
+  shopName           String?
+  logoUrl            String?
+  coverPhotoUrl      String?
+  coverLinkUrl       String? // where a click on the cover banner goes (the shop's website, WhatsApp ...)
+  details            String?
+  
+  // Subscription & Limits
+  subscriptionPackage String   @default("Free Trial")
+  subscriptionStart  DateTime?
+  subscriptionEnd    DateTime?
+  trialEndsAt        DateTime?
+  subscriptionActive Boolean   @default(true)
+  tileQuota          Int       @default(50)
+
+  // Dashboard colour theme chosen by this account (shop or admin)
+  theme              String?
+  
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tiles              Tile[]
+  savedDesigns       SavedDesign[]
+  roomScenes         RoomScene[]
+  payments           Payment[]
+
+  // In-app notifications: the ones addressed to this account, and the ones that are about this showroom
+  notifications      Notification[] @relation("NotificationRecipient")
+  aboutNotifications Notification[] @relation("NotificationShop")
+
+  @@map("users")
+}
+
+model Tile {
+  id           String   @id @default(uuid())
+  sku          String   // unique per showroom, see @@unique below
+  name         String
+  brand        String?
+  category     String   @default("both") // "floor" | "wall" | "both"
+  widthMm      Int
+  heightMm     Int
+  finish       String   @default("Matt") // "Matt" | "Gloss" | "Polished" | "Satin"
+  color        String   @default("#CCCCCC")
+  colorName    String   @default("Grey")
+  material     String?
+  textureUrl   String
+  previewUrl   String
+  pricePerSqFt Float    @default(0)
+  isBuiltIn    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relation to User (Shop)
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Two showrooms may use the same SKU; one showroom may not use it twice
+  @@unique([userId, sku])
+  @@map("tiles")
+}
+
+model SavedDesign {
+  id           String   @id @default(uuid())
+  sessionId    String
+  roomType     String
+  lengthFt     Float
+  widthFt      Float
+  heightFt     Float
+  floorTileId  String?
+  wallNTileId  String?
+  wallSTileId  String?
+  wallETileId  String?
+  wallWTileId  String?
+  layout       String   @default("straight")
+  groutWidthMm Int      @default(3)
+  groutColor   String   @default("#AAAAAA")
+  thumbnail    String?
+  createdAt    DateTime @default(now())
+
+  // 2D visualizer designs: the room (a built-in one, or a RoomScene of the showroom) and the full design as JSON.
+  // The columns above hold a summary of it, so 3D and 2D designs can be counted and listed together.
+  sceneId      String?
+  data         String?
+
+  // Relation to User (Shop)
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("saved_designs")
+}
+
+// A photo of a room that a showroom added to the 2D visualizer, with the surfaces (floor, walls ...) it marked on it.
+// `data` is JSON: { surfaces, occluders } in normalized photo coordinates (see src/lib/viz2d/types.ts).
+model RoomScene {
+  id        String   @id @default(uuid())
+  name      String
+  roomType  String   @default("living-room")
+  imageUrl  String   // /uploads/...
+  width     Int
+  height    Int
+  data      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("room_scenes")
+}
+
+// Advertisement posters shown in the login page slider (managed from the admin panel)
+model LoginPoster {
+  id          String   @id @default(uuid())
+  imageUrl    String
+  tag         String   @default("")
+  title       String
+  body        String   @default("")
+  buttonLabel String   @default("")
+  buttonUrl   String   @default("")
+  sortOrder   Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("login_posters")
+}
+
+// Subscription invoices and what has actually been collected against them (managed from the admin Payments tab)
+model Payment {
+  id        String    @id @default(uuid())
+  invoiceNo String    @unique
+  shopId    String
+  shop      User      @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  plan      String
+  amount    Float
+  status    String    @default("Pending") // Pending | Received | Failed | Refunded
+  dueDate   DateTime  // a calendar date, stored as midnight UTC
+  graceUntil DateTime? // extra time granted by the admin: the showroom is not suspended before this date
+  paidAt    DateTime? // the calendar date the money was received
+  method    String?
+  reference String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  notifications Notification[]
+
+  @@index([shopId])
+  @@index([status])
+  @@map("payments")
+}
+
+// In-app notifications.
+//   PAYMENT_REMINDER  admin -> showroom owner: "your fee for <month> is due". One row per showroom and month
+//                     (dedupeKey), so it cannot be sent twice by accident; a deliberate resend reuses the row.
+//   READ_RECEIPT      showroom owner -> admin: "<showroom> has read the reminder for <month>". One row per read.
+// A reminder's state comes from two timestamps: Sent (saved, not yet shown to the owner),
+// Unread (shown to the owner, not marked read) and Read (the owner pressed Mark as read).
+model Notification {
+  id          String    @id @default(uuid())
+  type        String    // PAYMENT_REMINDER | READ_RECEIPT
+  recipientId String
+  recipient   User      @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  senderId    String?   // the admin who sent a reminder
+  shopId      String    // the showroom this notification is about
+  shop        User      @relation("NotificationShop", fields: [shopId], references: [id], onDelete: Cascade)
+  paymentId   String?   // the invoice a reminder is for, when that month has been billed
+  payment     Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  parentId    String?   // a read receipt points at the reminder it answers
+  dedupeKey   String?   @unique // "reminder:<shopId>:<YYYY-MM>" for reminders; empty for receipts
+  month       String    // the billing month, e.g. "2026-10"
+  amount      Float?
+  dueDate     DateTime? // a calendar date, stored as midnight UTC
+  title       String
+  message     String
+  sentAt      DateTime  @default(now()) // when the reminder was (last) sent
+  deliveredAt DateTime? // when the owner's app first received it
+  readAt      DateTime? // when the owner pressed Mark as read (for a receipt: when the admin read it)
+  resendCount Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([recipientId, readAt])
+  @@index([shopId, month])
+  @@map("notifications")
+}

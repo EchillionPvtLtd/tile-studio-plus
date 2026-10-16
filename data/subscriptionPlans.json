@@ -1,0 +1,62 @@
+[
+  {
+    "id": "starter",
+    "name": "Starter",
+    "price": 5000,
+    "currency": "LKR",
+    "billingCycle": "monthly",
+    "tileQuota": 50,
+    "quotaLabel": "50 Tiles",
+    "features": [
+      "Full 3D WebGL Engine",
+      "In-Store QR Kiosk",
+      "50 Tile Storage Slots",
+      "Basic Support"
+    ],
+    "isPopular": false,
+    "isCustomPrice": false,
+    "active": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "pro-studio",
+    "name": "Pro Studio",
+    "price": 10000,
+    "currency": "LKR",
+    "billingCycle": "monthly",
+    "tileQuota": 100,
+    "quotaLabel": "100 Tiles",
+    "features": [
+      "Everything in Starter",
+      "100 Tile Storage Slots",
+      "Priority Texture Compilation",
+      "Custom Cover Banner",
+      "Dedicated Account Manager"
+    ],
+    "isPopular": true,
+    "isCustomPrice": false,
+    "active": true,
+    "sortOrder": 2
+  },
+  {
+    "id": "plan-mvbao41w",
+    "name": "Custom",
+    "price": 0,
+    "currency": "LKR",
+    "billingCycle": "monthly",
+    "tileQuota": 1,
+    "quotaLabel": "150 Tiles",
+    "features": [
+      "Full 3D WebGL Engine",
+      "2D Surface Visualizer Studio",
+      "Priority Texture Processing",
+      "24/7 Priority SLA Support",
+      "Unlimited Saved Room Designs"
+    ],
+    "isPopular": false,
+    "isCustomPrice": false,
+    "customPriceLabel": "",
+    "active": true,
+    "sortOrder": 3
+  }
+]

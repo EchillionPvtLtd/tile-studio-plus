@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+.next/
+out/
+
+# Misc
+.DS_Store
+*.pem
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
+npm-debug.log*
+
+# Uploads (don't commit user-uploaded files)
+public/uploads/
+
+# Prisma
+prisma/*.db
+*.tsbuildinfo
+
+# 2D visualizer: the original room photos (~240 MB) are only the pipeline's input; the app shows the web-sized
+# public/rooms2d/photos/<room>/photo.webp made from them, so the originals are neither committed nor deployed
+public/rooms2d/Rooms/
+
+# 2D visualizer room pipeline (scripts/photo-rooms): model results and previews are regenerated from the photos
+scripts/photo-rooms/_cache/
+scripts/photo-rooms/_preview/
+scripts/photo-rooms/__pycache__/

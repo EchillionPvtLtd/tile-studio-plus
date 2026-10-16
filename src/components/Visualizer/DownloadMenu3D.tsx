@@ -1,0 +1,123 @@
+'use client';
+
+import React, { useEffect, useRef, useState } from 'react';
+import { ChevronDown, Download, FileText, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { captureSceneBlob } from '@/components/Viewer/sceneSnapshot';
+import { cn } from '@/lib/utils';
+
+interface DownloadMenu3DProps {
+  /** Names the downloaded file. */
+  shopName?: string | null;
+  roomType: string;
+  /** Opens the quotation tab (the priced list and the PDF). */
+  onQuote: () => void;
+  onError: (message: string) => void;
+}
+
+const fileSlug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'room';
+
+/** The 3D visualizer's Download button: the current view as a JPG or a lossless PNG, or on to the quotation. */
+export function DownloadMenu3D({ shopName, roomType, onQuote, onError }: DownloadMenu3DProps) {
+  const [open, setOpen] = useState(false);
+  const [busy, setBusy] = useState<null | 'jpg' | 'png'>(null);
+  const root = useRef<HTMLDivElement>(null);
+
+  // Closes on a click anywhere else, and on Escape
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => {
+      if (root.current && !root.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('pointerdown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const save = async (type: 'image/jpeg' | 'image/png') => {
+    const kind = type === 'image/png' ? 'png' : 'jpg';
+    setOpen(false);
+    setBusy(kind);
+    try {
+      const blob = await captureSceneBlob(type, 0.95);
+      if (!blob) throw new Error('No picture');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${fileSlug(shopName ?? 'room')}-${roomType}-3d.${kind}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    } catch {
+      onError('The picture could not be saved. Wait until the room has finished loading and try again.');
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const item = 'flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-left text-xs font-medium text-foreground transition-colors hover:bg-accent focus-visible:bg-accent focus-visible:outline-none';
+
+  return (
+    <div ref={root} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        disabled={busy !== null}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label="Download a picture of this view"
+        className={cn('ds-btn w-9 px-0 sm:w-auto sm:px-3.5', open ? 'ds-btn-primary' : 'ds-btn-outline')}
+        title="Download a picture of this view"
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+        <span className="hidden sm:inline">Download</span>
+        <ChevronDown className={cn('hidden h-3.5 w-3.5 transition-transform sm:block', open && 'rotate-180')} />
+      </button>
+      {/* On a phone the menu spans the width under the header, so it never runs off the screen */}
+      {open && (
+        <div
+          role="menu"
+          aria-label="Download"
+          className="fixed inset-x-3 top-16 z-50 rounded-2xl border border-border bg-card p-1.5 shadow-elevated sm:absolute sm:inset-x-auto sm:right-0 sm:top-full sm:mt-2 sm:w-60"
+        >
+          <button type="button" role="menuitem" className={item} onClick={() => void save('image/jpeg')} autoFocus>
+            <ImageIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0">
+              Picture (JPG)
+              <span className="block text-2xs font-normal text-muted-foreground">Small file, good for sharing</span>
+            </span>
+          </button>
+          <button type="button" role="menuitem" className={item} onClick={() => void save('image/png')}>
+            <ImageIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0">
+              Picture (PNG)
+              <span className="block text-2xs font-normal text-muted-foreground">Lossless, larger file</span>
+            </span>
+          </button>
+          <div className="my-1 h-px bg-border" />
+          <button
+            type="button"
+            role="menuitem"
+            className={item}
+            onClick={() => {
+              setOpen(false);
+              onQuote();
+            }}
+          >
+            <FileText className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <span className="min-w-0">
+              Quotation PDF and more
+              <span className="block text-2xs font-normal text-muted-foreground">Save, price and print the design</span>
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}

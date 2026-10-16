@@ -1,0 +1,979 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Disable dotted/slashed zero globally so 0 renders as a clean standard circle */
+*, ::before, ::after {
+  font-variant-numeric: normal;
+  font-feature-settings: "zero" 0;
+}
+
+/* ── Design tokens ─────────────────────────────────────────
+   Single source of truth for the black & white dashboard theme.
+   Components use semantic classes (bg-card, text-muted-foreground,
+   border-border …) instead of raw hex values, so light/dark and the
+   optional palettes below only ever change these variables.        */
+:root,
+html.light {
+  --font-geist: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --background: 220 25.0% 95.3%;
+  --foreground: 220 15.8% 7.5%;
+  --card: 0 0.0% 100.0%;
+  --card-foreground: 220 15.8% 7.5%;
+  --popover: 0 0.0% 100.0%;
+  --popover-foreground: 220 15.8% 7.5%;
+  --primary: 240 9.1% 4.3%;
+  --primary-foreground: 0 0.0% 100.0%;
+  --secondary: 216 17.2% 94.3%;
+  --secondary-foreground: 220 15.8% 7.5%;
+  --muted: 220 23.1% 97.5%;
+  --muted-foreground: 224 4.9% 44.1%;
+  --accent: 220 14.3% 95.9%;
+  --accent-foreground: 220 15.8% 7.5%;
+  --destructive: 0 72.2% 50.6%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 0 85.7% 97.3%;
+  --success: 142 76.2% 36.3%;
+  --success-foreground: 0 0.0% 100.0%;
+  --success-muted: 146 53.8% 94.9%;
+  --warning: 26 90.5% 37.1%;
+  --warning-muted: 48 100.0% 96.1%;
+  --border: 220 13.0% 91.0%;
+  --input: 220 13.0% 91.0%;
+  --field: 0 0.0% 100.0%;
+  --ring: 240 9.1% 4.3%;
+  --sidebar: 225 11.8% 6.7%;
+  --sidebar-foreground: 0 0.0% 96.1%;
+  --sidebar-muted: 225 3.6% 56.1%;
+  --sidebar-faint: 224 5.5% 39.4%;
+  --sidebar-accent: 230 12.0% 9.8%;
+  --sidebar-primary: 0 0.0% 96.1%;
+  --sidebar-primary-foreground: 228 12.8% 7.6%;
+  --sidebar-active: 225 9% 26%;
+  --sidebar-active-foreground: 0 0% 100%;
+  --inverse: 240 9.1% 4.3%;
+  --inverse-foreground: 0 0% 100%;
+  --radius: 0.75rem;
+}
+
+.dark,
+html.dark {
+  --background: 220 12.0% 4.9%;
+  --foreground: 0 0.0% 98.0%;
+  --card: 0 0.0% 9.0%;
+  --card-foreground: 0 0.0% 98.0%;
+  --popover: 0 0.0% 9.0%;
+  --popover-foreground: 0 0.0% 98.0%;
+  --primary: 0 0.0% 100.0%;
+  --primary-foreground: 240 9.1% 4.3%;
+  --secondary: 0 0.0% 14.9%;
+  --secondary-foreground: 0 0.0% 98.0%;
+  --muted: 0 0.0% 12.2%;
+  --muted-foreground: 0 0.0% 63.9%;
+  --accent: 0 0.0% 14.9%;
+  --accent-foreground: 0 0.0% 98.0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 352 40.0% 11.8%;
+  --success: 142 69.2% 58.0%;
+  --success-foreground: 144 65.2% 4.5%;
+  --success-muted: 149 49.0% 10.0%;
+  --warning: 43 96.4% 56.3%;
+  --warning-muted: 37 44.8% 11.4%;
+  --border: 0 0.0% 14.9%;
+  --input: 0 0.0% 25.1%;
+  --field: 0 0.0% 14.9%;
+  --ring: 0 0.0% 100.0%;
+  --sidebar: 225 11.8% 6.7%;
+  --sidebar-foreground: 0 0.0% 96.1%;
+  --sidebar-muted: 225 3.6% 56.1%;
+  --sidebar-faint: 224 5.5% 39.4%;
+  --sidebar-accent: 230 12.0% 9.8%;
+  --sidebar-primary: 0 0.0% 96.1%;
+  --sidebar-primary-foreground: 228 12.8% 7.6%;
+  --sidebar-active: 225 9% 26%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ── Touch & small-screen defaults ───────────────────────── */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+/* iOS Safari zooms the page when a focused field is under 16px. */
+@media (max-width: 1023px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}
+/* Finger-sized targets on touch screens. */
+@media (pointer: coarse) {
+  .ds-btn { min-height: 2.5rem; }
+  .ds-btn-sm { min-height: 2.25rem; }
+  .ds-tab { min-height: 2.5rem; }
+}
+
+html, body {
+  min-height: 100%;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: 'Manrope', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Dashboard primitives ────────────────────────────────────
+   One definition per pattern, built only from design tokens.
+   Prefer these over re-typing long utility strings.            */
+@layer components {
+  /* Surfaces */
+  .ds-card {
+    @apply rounded-3xl border border-border bg-card text-card-foreground shadow-card;
+  }
+  .ds-inset {
+    @apply rounded-2xl border border-border bg-muted;
+  }
+
+  /* Text — two heading sizes, one subtitle */
+  .ds-page-title {
+    @apply text-2xl font-semibold tracking-tight text-foreground;
+  }
+  .ds-section-title {
+    @apply text-lg font-semibold tracking-tight text-foreground;
+  }
+  .ds-subtitle {
+    @apply mt-1 text-xs text-muted-foreground;
+  }
+  .ds-eyebrow {
+    @apply text-2xs font-semibold uppercase tracking-wider text-muted-foreground;
+  }
+  .ds-label {
+    @apply mb-1.5 block text-2xs font-semibold uppercase tracking-wider text-muted-foreground;
+  }
+
+  /* Form fields: input, select, textarea */
+  .ds-field {
+    @apply w-full rounded-xl border border-input bg-field px-3.5 py-2.5 text-sm text-foreground outline-none transition-colors
+      placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/10
+      disabled:cursor-not-allowed disabled:opacity-60 read-only:bg-muted read-only:text-muted-foreground;
+  }
+
+  /* Buttons */
+  .ds-btn {
+    @apply inline-flex h-9 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-full px-4 text-xs font-semibold
+      transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+      focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
+  }
+  .ds-btn-sm {
+    @apply h-7 gap-1.5 px-3 text-2xs;
+  }
+  .ds-btn-lg {
+    @apply h-10 px-5;
+  }
+  .ds-btn-primary {
+    @apply bg-primary text-primary-foreground shadow-sm hover:bg-primary/90;
+  }
+  .ds-btn-outline {
+    @apply border border-input bg-card text-foreground shadow-sm hover:bg-accent;
+  }
+  .ds-btn-ghost {
+    @apply text-muted-foreground hover:bg-accent hover:text-foreground;
+  }
+  .ds-btn-destructive {
+    @apply bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90;
+  }
+
+  /* Sub-navigation pills (one per tab section) */
+  .ds-tab {
+    @apply inline-flex h-8 shrink-0 cursor-pointer items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-card px-4
+      text-xs font-semibold text-muted-foreground transition-colors hover:text-foreground;
+  }
+  .ds-tab-active {
+    @apply border-primary bg-primary text-primary-foreground hover:text-primary-foreground;
+  }
+}
+
+/* ── Typeset Docs Typography System ──────────────────────── */
+.typeset-docs {
+  --typeset-font-body: var(--font-geist, 'Manrope', system-ui, sans-serif);
+  --typeset-font-heading: var(--font-geist, 'Manrope', system-ui, sans-serif);
+  --typeset-font-mono: var(--font-geist-mono, ui-monospace, monospace);
+  --typeset-size: 15px;
+  --typeset-leading: 1.75;
+  --typeset-flow: 1.25em;
+
+  font-family: var(--typeset-font-body);
+  font-size: var(--typeset-size);
+  line-height: var(--typeset-leading);
+}
+
+.typeset-docs h1,
+.typeset-docs h2,
+.typeset-docs h3,
+.typeset-docs h4,
+.typeset-docs h5,
+.typeset-docs h6 {
+  font-family: var(--typeset-font-heading);
+  letter-spacing: -0.015em;
+  font-weight: 700;
+}
+
+.typeset-docs code,
+.typeset-docs pre,
+.typeset-docs kbd {
+  font-family: var(--typeset-font-mono);
+}
+
+.typeset-docs > * + * {
+  margin-top: var(--typeset-flow);
+}
+
+/* ── Typography scale (Manrope) ──────────────────────────── */
+:root {
+  /* Font weights */
+  --fw-regular:    400;
+  --fw-medium:     500;
+  --fw-semibold:   600;
+  --fw-bold:       700;
+  --fw-extrabold:  800;
+
+  /* Font sizes */
+  --fs-main-heading:    clamp(40px, 5vw, 56px);  /* ExtraBold 800 */
+  --fs-page-heading:    clamp(28px, 3.5vw, 36px); /* ExtraBold 800 */
+  --fs-section-heading: clamp(20px, 2.5vw, 24px); /* Bold 700 */
+  --fs-card-heading:    16px;                      /* SemiBold 600 */
+  --fs-body:            15px;                      /* Regular 400 */
+  --fs-nav:             14px;                      /* SemiBold 600 */
+  --fs-button:          14px;                      /* SemiBold 600 */
+  --fs-dashboard-num:   clamp(28px, 3vw, 36px);   /* Bold/ExtraBold */
+}
+
+/* ── Technical / monospace data (Clean system monospace) ──────────── */
+.font-mono-tech {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.8125rem;   /* 13px */
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+
+/* ── Custom Sleek Minimal Scrollbars (Linear / Stripe style) ── */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.25) transparent;
+}
+.custom-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.45);
+}
+
+/* Minimal ultra-thin sidebar scrollbar */
+.sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--sidebar-foreground) / 0.18) transparent;
+}
+.sidebar-scrollbar::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(var(--sidebar-foreground) / 0.18);
+  border-radius: 9999px;
+}
+.sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--sidebar-foreground) / 0.35);
+}
+.sidebar-scrollbar::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Global dark scrollbar fallback */
+.dark ::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.dark ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+.dark ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.dark {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+
+/* ── Range input ──────────────────────────────────────────── */
+input[type=range] {
+  -webkit-appearance: none;
+  background: transparent;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 9999px;
+  background: #333333;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #000000;
+  border: 2px solid #ffffff;
+  margin-top: -6px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+  transition: transform 0.1s ease, box-shadow 0.15s;
+}
+.dark input[type=range]::-webkit-slider-thumb {
+  background: #ffffff;
+  border: 2px solid #18181b;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.6);
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(0,0,0,0.15);
+}
+.dark input[type=range]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.25);
+}
+
+/* ── Custom Range Slider Thumb: Black in Light Mode, White in Dark Mode ── */
+.range-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+.range-slider-thumb::-webkit-slider-runnable-track {
+  background: transparent !important;
+  border: none !important;
+  height: 100% !important;
+}
+.range-slider-thumb::-moz-range-track {
+  background: transparent !important;
+  border: none !important;
+  height: 100% !important;
+}
+.range-slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  position: relative !important;
+  z-index: 50 !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  cursor: grab !important;
+  margin-top: 0 !important;
+}
+.range-slider-thumb::-webkit-slider-thumb:active {
+  cursor: grabbing !important;
+  transform: scale(1.1);
+}
+.range-slider-thumb::-moz-range-thumb {
+  position: relative !important;
+  z-index: 50 !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4) !important;
+  cursor: grab !important;
+}
+.dark .range-slider-thumb::-webkit-slider-thumb {
+  background-color: #ffffff !important;
+  border: 2px solid #09090b !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
+}
+.dark .range-slider-thumb::-moz-range-thumb {
+  background-color: #ffffff !important;
+  border: 2px solid #09090b !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ── Glassmorphism sidebar ────────────────────────────────── */
+.sidebar-glass {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid rgba(51, 51, 51, 0.8);
+}
+
+/* ── Section divider ─────────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #333333 50%, transparent);
+  margin: 0 -1px;
+}
+
+/* ── Viewer background ───────────────────────────────────── */
+.viewer-bg {
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 70%, rgba(255,255,255,0.04) 0%, transparent 60%),
+    linear-gradient(135deg, #000000 0%, #111111 50%, #222222 100%);
+}
+
+/* ── Tile card shimmer skeleton ──────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #111111 25%, #333333 50%, #111111 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+/* ── Canvas container ────────────────────────────────────── */
+.canvas-container canvas {
+  display: block;
+  border-radius: 0 !important;
+}
+
+/* ── Animated gradient border on active tile ─────────────── */
+@keyframes borderGlow {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(255,255,255,0.6); }
+  50%       { box-shadow: 0 0 0 3px rgba(255,255,255,0.9), 0 0 12px rgba(255,255,255,0.4); }
+}
+.tile-active-glow {
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+.login-auth-input:-webkit-autofill,
+.login-auth-input:-webkit-autofill:hover,
+.login-auth-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: hsl(var(--foreground));
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--field)) inset;
+  caret-color: hsl(var(--foreground));
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* Brand logo: white artwork on dark sidebars, black artwork on light-sidebar themes. */
+.logo-on-light { display: none; }
+html[data-theme="travertine"] .logo-on-dark,
+html[data-theme="ocean"] .logo-on-dark,
+html[data-theme="sage"] .logo-on-dark { display: none; }
+html[data-theme="travertine"] .logo-on-light,
+html[data-theme="ocean"] .logo-on-light,
+html[data-theme="sage"] .logo-on-light { display: block; }
+
+/* ========================================================================= */
+/* OPTIONAL DASHBOARD PALETTES (ThemeSelector → html[data-theme])            */
+/* Each palette only re-points the design tokens.                            */
+/* ========================================================================= */
+
+html[data-theme="navy"],
+html[data-theme="navy"].dark {
+  --background: 220 56.2% 6.3%;
+  --foreground: 210 66.7% 96.5%;
+  --card: 222 56.5% 13.5%;
+  --card-foreground: 210 66.7% 96.5%;
+  --popover: 222 56.5% 13.5%;
+  --popover-foreground: 210 66.7% 96.5%;
+  --primary: 198 93.2% 59.6%;
+  --primary-foreground: 220 56.2% 6.3%;
+  --secondary: 222 52.2% 18.0%;
+  --secondary-foreground: 0 0.0% 98.0%;
+  --muted: 221 53.7% 16.1%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 222 52.2% 18.0%;
+  --accent-foreground: 0 0.0% 98.0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 352 40.0% 11.8%;
+  --success: 142 69.2% 58.0%;
+  --success-foreground: 144 65.2% 4.5%;
+  --success-muted: 149 49.0% 10.0%;
+  --warning: 43 96.4% 56.3%;
+  --warning-muted: 37 44.8% 11.4%;
+  --border: 220 44.4% 21.2%;
+  --input: 221 44.2% 25.3%;
+  --field: 222 53.5% 16.9%;
+  --ring: 198 93.2% 59.6%;
+  --sidebar: 222 55.1% 9.6%;
+  --sidebar-foreground: 0 0.0% 96.1%;
+  --sidebar-muted: 225 3.6% 56.1%;
+  --sidebar-faint: 224 5.5% 39.4%;
+  --sidebar-accent: 221 52.5% 15.7%;
+  --sidebar-primary: 0 0.0% 96.1%;
+  --sidebar-primary-foreground: 228 12.8% 7.6%;
+  --sidebar-active: 205 90% 36%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="emerald"],
+html[data-theme="emerald"].dark {
+  --background: 164 65.2% 4.5%;
+  --foreground: 152 81.0% 95.9%;
+  --card: 166 56.9% 10.0%;
+  --card-foreground: 152 81.0% 95.9%;
+  --popover: 166 56.9% 10.0%;
+  --popover-foreground: 152 81.0% 95.9%;
+  --primary: 160 84.1% 39.4%;
+  --primary-foreground: 164 65.2% 4.5%;
+  --secondary: 166 57.6% 12.9%;
+  --secondary-foreground: 0 0.0% 98.0%;
+  --muted: 166 58.6% 11.4%;
+  --muted-foreground: 157 22.4% 64.1%;
+  --accent: 166 57.6% 12.9%;
+  --accent-foreground: 0 0.0% 98.0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 352 40.0% 11.8%;
+  --success: 142 69.2% 58.0%;
+  --success-foreground: 144 65.2% 4.5%;
+  --success-muted: 149 49.0% 10.0%;
+  --warning: 43 96.4% 56.3%;
+  --warning-muted: 37 44.8% 11.4%;
+  --border: 166 53.5% 16.9%;
+  --input: 166 52.7% 21.6%;
+  --field: 166 57.6% 12.9%;
+  --ring: 160 84.1% 39.4%;
+  --sidebar: 166 60.0% 6.9%;
+  --sidebar-foreground: 0 0.0% 96.1%;
+  --sidebar-muted: 225 3.6% 56.1%;
+  --sidebar-faint: 224 5.5% 39.4%;
+  --sidebar-accent: 166 55.6% 10.6%;
+  --sidebar-primary: 0 0.0% 96.1%;
+  --sidebar-primary-foreground: 228 12.8% 7.6%;
+  --sidebar-active: 160 84% 26%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="champagne"],
+html[data-theme="champagne"].dark {
+  --background: 240 6.7% 5.9%;
+  --foreground: 60 9.1% 97.8%;
+  --card: 240 5.3% 11.2%;
+  --card-foreground: 60 9.1% 97.8%;
+  --popover: 240 5.3% 11.2%;
+  --popover-foreground: 60 9.1% 97.8%;
+  --primary: 38 92.1% 50.2%;
+  --primary-foreground: 240 6.7% 5.9%;
+  --secondary: 240 6.5% 15.1%;
+  --secondary-foreground: 0 0.0% 98.0%;
+  --muted: 240 5.9% 13.3%;
+  --muted-foreground: 0 0.0% 63.9%;
+  --accent: 240 6.5% 15.1%;
+  --accent-foreground: 0 0.0% 98.0%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 352 40.0% 11.8%;
+  --success: 142 69.2% 58.0%;
+  --success-foreground: 144 65.2% 4.5%;
+  --success-muted: 149 49.0% 10.0%;
+  --warning: 43 96.4% 56.3%;
+  --warning-muted: 37 44.8% 11.4%;
+  --border: 252 5.3% 18.6%;
+  --input: 257 5.8% 23.7%;
+  --field: 240 6.5% 15.1%;
+  --ring: 38 92.1% 50.2%;
+  --sidebar: 240 4.8% 8.2%;
+  --sidebar-foreground: 0 0.0% 96.1%;
+  --sidebar-muted: 225 3.6% 56.1%;
+  --sidebar-faint: 224 5.5% 39.4%;
+  --sidebar-accent: 240 4.8% 12.4%;
+  --sidebar-primary: 0 0.0% 96.1%;
+  --sidebar-primary-foreground: 228 12.8% 7.6%;
+  --sidebar-active: 32 90% 36%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="slate"] {
+  --background: 222 20% 8%;
+  --foreground: 210 20% 96%;
+  --card: 222 18% 12%;
+  --card-foreground: 210 20% 96%;
+  --popover: 222 18% 12%;
+  --popover-foreground: 210 20% 96%;
+  --primary: 238 80% 64%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 222 15% 17%;
+  --secondary-foreground: 210 20% 96%;
+  --muted: 222 16% 14%;
+  --muted-foreground: 220 10% 66%;
+  --accent: 222 15% 17%;
+  --accent-foreground: 210 20% 96%;
+  --border: 222 14% 19%;
+  --input: 222 14% 26%;
+  --field: 222 16% 15%;
+  --ring: 238 80% 64%;
+  --sidebar: 222 22% 6%;
+  --sidebar-foreground: 210 20% 96%;
+  --sidebar-muted: 220 10% 60%;
+  --sidebar-faint: 220 9% 42%;
+  --sidebar-accent: 222 18% 11%;
+  --sidebar-primary: 238 80% 64%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-active: 238 70% 58%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="charcoal"] {
+  --background: 200 8% 8%;
+  --foreground: 180 10% 96%;
+  --card: 200 8% 12%;
+  --card-foreground: 180 10% 96%;
+  --popover: 200 8% 12%;
+  --popover-foreground: 180 10% 96%;
+  --primary: 173 76% 42%;
+  --primary-foreground: 200 15% 6%;
+  --secondary: 200 7% 16%;
+  --secondary-foreground: 180 10% 96%;
+  --muted: 200 7% 14%;
+  --muted-foreground: 195 6% 65%;
+  --accent: 200 7% 16%;
+  --accent-foreground: 180 10% 96%;
+  --border: 200 6% 19%;
+  --input: 200 6% 26%;
+  --field: 200 7% 15%;
+  --ring: 173 76% 42%;
+  --sidebar: 200 10% 6%;
+  --sidebar-foreground: 180 10% 96%;
+  --sidebar-muted: 195 6% 60%;
+  --sidebar-faint: 195 5% 42%;
+  --sidebar-accent: 200 8% 11%;
+  --sidebar-primary: 173 76% 42%;
+  --sidebar-primary-foreground: 200 15% 6%;
+  --sidebar-active: 173 76% 28%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="ocean"] {
+  --background: 214 32% 96%;
+  --foreground: 222 47% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 214 30% 93%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 214 32% 97%;
+  --muted-foreground: 215 16% 42%;
+  --accent: 214 40% 94%;
+  --accent-foreground: 222 47% 11%;
+  --border: 214 25% 90%;
+  --input: 214 22% 84%;
+  --field: 0 0% 100%;
+  --ring: 221 83% 53%;
+  --sidebar: 214 40% 98%;
+  --sidebar-foreground: 222 47% 11%;
+  --sidebar-muted: 215 16% 42%;
+  --sidebar-faint: 215 14% 62%;
+  --sidebar-accent: 214 40% 93%;
+  --sidebar-primary: 221 83% 53%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-active: 221 83% 53%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="sage"] {
+  --background: 150 14% 95%;
+  --foreground: 160 25% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 160 25% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 160 25% 10%;
+  --primary: 158 64% 28%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 150 14% 91%;
+  --secondary-foreground: 160 25% 10%;
+  --muted: 150 14% 93%;
+  --muted-foreground: 160 8% 40%;
+  --accent: 150 18% 92%;
+  --accent-foreground: 160 25% 10%;
+  --border: 150 12% 87%;
+  --input: 150 11% 80%;
+  --field: 0 0% 100%;
+  --ring: 158 64% 28%;
+  --sidebar: 150 18% 97%;
+  --sidebar-foreground: 160 25% 10%;
+  --sidebar-muted: 160 8% 40%;
+  --sidebar-faint: 160 6% 60%;
+  --sidebar-accent: 150 16% 92%;
+  --sidebar-primary: 158 64% 28%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-active: 158 64% 28%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+html[data-theme="travertine"] {
+  --background: 42 33.3% 94.1%;
+  --foreground: 12 6.5% 15.1%;
+  --card: 0 0.0% 100.0%;
+  --card-foreground: 12 6.5% 15.1%;
+  --popover: 0 0.0% 100.0%;
+  --popover-foreground: 12 6.5% 15.1%;
+  --primary: 32 81.0% 28.8%;
+  --primary-foreground: 0 0.0% 100.0%;
+  --secondary: 38 31.1% 88.0%;
+  --secondary-foreground: 220 15.8% 7.5%;
+  --muted: 37 33.3% 90.6%;
+  --muted-foreground: 25 5.3% 44.7%;
+  --accent: 39 35.0% 92.2%;
+  --accent-foreground: 220 15.8% 7.5%;
+  --destructive: 0 72.2% 50.6%;
+  --destructive-foreground: 0 0.0% 100.0%;
+  --destructive-muted: 0 85.7% 97.3%;
+  --success: 142 76.2% 36.3%;
+  --success-foreground: 0 0.0% 100.0%;
+  --success-muted: 146 53.8% 94.9%;
+  --warning: 26 90.5% 37.1%;
+  --warning-muted: 48 100.0% 96.1%;
+  --border: 35 25.4% 86.9%;
+  --input: 37 26.6% 84.5%;
+  --field: 0 0.0% 100.0%;
+  --ring: 32 81.0% 28.8%;
+  --sidebar: 40 37.5% 96.9%;
+  --sidebar-foreground: 12 6.5% 15.1%;
+  --sidebar-muted: 25 5.3% 44.7%;
+  --sidebar-faint: 24 5.4% 63.9%;
+  --sidebar-accent: 39 31.8% 91.4%;
+  --sidebar-primary: 12 6.5% 15.1%;
+  --sidebar-primary-foreground: 40 37.5% 96.9%;
+  --sidebar-active: 32 81% 28.8%;
+  --sidebar-active-foreground: 0 0% 100%;
+}
+
+/* ── Uiverse.io by Yaya12085 (Customized for 2D & 3D Visualizer Buttons) ── */
+.uiverse-btn-container {
+  width: 7.25em;
+  height: 7.25em;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uiverse-btn {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid #090909;
+  background-color: transparent;
+  background-image: linear-gradient(145deg, #171717, #444245);
+  box-sizing: border-box;
+  box-shadow: inset 2px 2px 0 #7d7c7e, inset -2px -2px 0px #1c1c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  user-select: none;
+}
+
+.uiverse-btn-container input {
+  display: none;
+}
+
+.uiverse-btn::before {
+  position: absolute;
+  content: "";
+  top: -0.18em;
+  left: -0.18em;
+  right: -0.18em;
+  bottom: -0.18em;
+  border-radius: inherit;
+  background-color: transparent;
+  background-image: linear-gradient(145deg, #262626, #606060);
+  z-index: -1;
+  box-shadow: none;
+  transition: all 0.25s ease;
+}
+
+.uiverse-btn .uiverse-icon {
+  width: 3.6em;
+  height: 3.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.uiverse-btn .uiverse-icon svg {
+  height: 100%;
+  width: 100%;
+  fill: #a5a5a5;
+  transition: fill 0.2s ease;
+}
+
+.uiverse-btn:hover {
+  transform: scale(1.03);
+  box-shadow: inset -2px -2px 0 #4a4a4a, inset 2px 2px 0 #1c1c1c;
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.uiverse-btn:hover .uiverse-icon svg {
+  fill: #d4d4d8;
+}
+
+.uiverse-btn:hover .uiverse-text {
+  color: #f4f4f5;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.25);
+}
+
+.uiverse-btn:active {
+  transform: scale(0.97);
+}
+
+.uiverse-btn-container input:checked + .uiverse-btn,
+.uiverse-btn.active {
+  box-shadow: inset -2px -2px 0 #4a4a4a, inset 2px 2px 0 #1c1c1c;
+  border: 3px solid rgba(255, 255, 255, 0.22);
+  animation: uiverseHeartbeat 1.2s ease-in-out infinite, uiverseAnimeBorder .6s ease-in-out alternate-reverse infinite;
+}
+
+.uiverse-btn-container input:checked + .uiverse-btn .uiverse-icon svg,
+.uiverse-btn.active .uiverse-icon svg {
+  fill: #e4e4e7;
+  animation: uiverseAnimeFill .6s ease-in-out alternate-reverse infinite;
+}
+
+.uiverse-btn-container input:checked + .uiverse-btn .uiverse-text,
+.uiverse-btn.active .uiverse-text {
+  color: #f4f4f5;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.3);
+  animation: uiverseAnimeText .6s ease-in-out alternate-reverse infinite;
+}
+
+@keyframes uiverseAnimeFill {
+  from {
+    fill: #ffffff;
+  }
+  to {
+    fill: rgba(255, 255, 255, 0.25);
+  }
+}
+
+@keyframes uiverseAnimeBorder {
+  from {
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+  to {
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+@keyframes uiverseAnimeText {
+  from {
+    color: #ffffff;
+  }
+  to {
+    color: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Two quick beats then a rest, like a pulse */
+@keyframes uiverseHeartbeat {
+  0%, 40%, 100% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.09);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.06);
+  }
+}
+
+/* ── From Uiverse.io by david-mohseni (Social Media Icons) ── */
+.uiverse-social-wrapper {
+  display: inline-flex;
+  list-style: none;
+  width: 100%;
+  padding: 6px 0 2px 0;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.uiverse-social-wrapper .icon {
+  position: relative;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.uiverse-social-wrapper .icon:hover {
+  transform: translateY(-3px) scale(1.12);
+  box-shadow: 0 12px 18px rgba(0, 0, 0, 0.32);
+}
+
+/* WhatsApp */
+.uiverse-social-wrapper .whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+
+/* Call */
+.uiverse-social-wrapper .call {
+  background: #0ea5e9;
+  color: #fff;
+}
+
+/* Facebook */
+.uiverse-social-wrapper .facebook {
+  background: #1877f2;
+  color: #fff;
+}
+
+/* Instagram */
+.uiverse-social-wrapper .instagram {
+  background: #e4405f;
+  color: #fff;
+}
+
