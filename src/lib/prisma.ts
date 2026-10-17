@@ -7,10 +7,14 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function initPrismaClient(): PrismaClient {
-  const tursoUrl = process.env.TURSO_DATABASE_URL;
+  const tursoUrl =
+    process.env.TURSO_DATABASE_URL ||
+    (process.env.DATABASE_URL?.startsWith('libsql://') || process.env.DATABASE_URL?.startsWith('https://')
+      ? process.env.DATABASE_URL
+      : undefined);
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
-  if (tursoUrl && authToken && tursoUrl.startsWith('libsql://')) {
+  if (tursoUrl && authToken && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://'))) {
     // Resilient fetch wrapper with retry on transient network hiccups/socket drops
     const resilientFetch = async (input: any, init?: any) => {
       let attempts = 0;
