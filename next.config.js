@@ -8,7 +8,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  serverExternalPackages: ['sharp', '@prisma/client'],
+  serverExternalPackages: ['sharp', '@prisma/client', 'bcrypt', '@libsql/client'],
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
