@@ -6,21 +6,38 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+function cleanEnv(val?: string): string {
+  if (!val) return '';
+  let s = val.trim();
+  if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+    s = s.slice(1, -1).trim();
+  }
+  return s;
+}
+
 function initPrismaClient(): PrismaClient {
-  const tursoUrl =
-    process.env.TURSO_DATABASE_URL ||
-    (process.env.DATABASE_URL?.startsWith('libsql://') || process.env.DATABASE_URL?.startsWith('https://')
-      ? process.env.DATABASE_URL
-      : undefined);
-  const authToken = process.env.TURSO_AUTH_TOKEN;
+  let tursoUrl = cleanEnv(process.env.TURSO_DATABASE_URL);
+  let authToken = cleanEnv(process.env.TURSO_AUTH_TOKEN);
+
+  const rawDbUrl = cleanEnv(process.env.DATABASE_URL);
+  if (!tursoUrl && (rawDbUrl.startsWith('libsql://') || rawDbUrl.startsWith('https://') || rawDbUrl.includes('turso.io'))) {
+    tursoUrl = rawDbUrl;
+  }
 
   // Prisma SQLite provider strictly requires DATABASE_URL to start with "file:".
-  // If someone pasted the libsql:// URL into DATABASE_URL in Vercel, sanitize it to prevent Prisma validation errors.
-  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith('file:')) {
+  if (!process.env.DATABASE_URL || !process.env.DATABASE_URL.startsWith('file:')) {
     process.env.DATABASE_URL = 'file:./dev.db';
   }
 
-  if (tursoUrl && authToken && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://'))) {
+  const isRemoteTurso = tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://');
+
+  if (process.env.NODE_ENV === 'production' && (!isRemoteTurso || !authToken)) {
+    throw new Error(
+      `Turso database configuration missing in Vercel! TURSO_DATABASE_URL: ${tursoUrl ? 'FOUND (' + tursoUrl.slice(0, 15) + '...)' : 'MISSING'}, TURSO_AUTH_TOKEN: ${authToken ? 'FOUND (length ' + authToken.length + ')' : 'MISSING'}. Ensure both are added in Vercel Settings -> Environment Variables.`
+    );
+  }
+
+  if (isRemoteTurso && authToken) {
     // Resilient fetch wrapper with retry on transient network hiccups/socket drops
     const resilientFetch = async (input: any, init?: any) => {
       let attempts = 0;
