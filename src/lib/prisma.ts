@@ -14,6 +14,12 @@ function initPrismaClient(): PrismaClient {
       : undefined);
   const authToken = process.env.TURSO_AUTH_TOKEN;
 
+  // Prisma SQLite provider strictly requires DATABASE_URL to start with "file:".
+  // If someone pasted the libsql:// URL into DATABASE_URL in Vercel, sanitize it to prevent Prisma validation errors.
+  if (process.env.DATABASE_URL && !process.env.DATABASE_URL.startsWith('file:')) {
+    process.env.DATABASE_URL = 'file:./dev.db';
+  }
+
   if (tursoUrl && authToken && (tursoUrl.startsWith('libsql://') || tursoUrl.startsWith('https://'))) {
     // Resilient fetch wrapper with retry on transient network hiccups/socket drops
     const resilientFetch = async (input: any, init?: any) => {
