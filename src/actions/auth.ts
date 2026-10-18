@@ -5,10 +5,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { createSession, deleteSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { getLockSeconds, registerFailure, registerSuccess } from "@/lib/loginThrottle";
 import { enforceOverdueSuspensions } from "@/lib/payments";
-import { trustedClientIp } from "@/lib/clientIp";
 
 const loginSchema = z.object({
   email: z.string().trim().email({ message: "Invalid email address" }),
@@ -21,34 +18,10 @@ export type LoginFormState = {
     email?: string[];
     password?: string[];
   };
-  /** Set when sign-in is locked; seconds until the next attempt is allowed. */
-  retryAfterSec?: number;
 };
 
-/** Only trusted when TRUSTED_PROXY_HEADER is configured; otherwise null and sign-in is limited per email only. */
-async function getClientIp() {
-  return trustedClientIp(await headers());
-}
-
-function lockedState(seconds: number): LoginFormState {
-  const mins = Math.ceil(seconds / 60);
-  return {
-    message: `Too many failed attempts. Try again in ${mins} minute${mins === 1 ? "" : "s"}.`,
-    retryAfterSec: seconds,
-  };
-}
-
-/** Count a bad credential and build the error to show. */
-async function invalidCredentials(email: string, ip: string | null): Promise<LoginFormState> {
-  const { lockedSeconds, attemptsLeft } = await registerFailure(email, ip);
-  if (lockedSeconds > 0) return lockedState(lockedSeconds);
-  return {
-    message:
-      attemptsLeft <= 2
-        ? `Invalid credentials. ${attemptsLeft} attempt${attemptsLeft === 1 ? "" : "s"} left before sign-in is locked.`
-        : "Invalid credentials.",
-  };
-}
+/** One message for every failed sign-in, so it never says whether the email exists. */
+const INVALID_LOGIN: LoginFormState = { message: "Invalid email or password. Please try again." };
 
 export async function login(prevState: LoginFormState | null | undefined, formData: FormData): Promise<LoginFormState> {
   try {
@@ -64,26 +37,20 @@ export async function login(prevState: LoginFormState | null | undefined, formDa
     const email = result.data.email.trim().toLowerCase();
     const { password } = result.data;
 
-    const ip = await getClientIp();
-    const lockSeconds = await getLockSeconds(email, ip);
-    if (lockSeconds > 0) return lockedState(lockSeconds);
-
     // Database User Lookup (Super Admins & Showrooms)
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
-      return await invalidCredentials(email, ip);
+      return INVALID_LOGIN;
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return await invalidCredentials(email, ip);
+      return INVALID_LOGIN;
     }
-
-    await registerSuccess(email);
 
     // Super Admin Login
     if (user.role === "ADMIN") {
@@ -93,7 +60,7 @@ export async function login(prevState: LoginFormState | null | undefined, formDa
 
     // Shop Login
     if (user.role !== "SHOP") {
-      return await invalidCredentials(email, ip);
+      return INVALID_LOGIN;
     }
 
     // Suspend the showroom if a payment date has passed (and any extra time given by the admin has run out)
