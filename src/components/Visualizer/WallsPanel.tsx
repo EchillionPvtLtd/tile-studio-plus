@@ -106,7 +106,8 @@ export function WallsPanel({ tiles, isLoading }: { tiles: Tile[]; isLoading: boo
         title={WALL_NAMES[s]}
         className={cn(
           'absolute overflow-hidden rounded-md border transition-all',
-          selected ? 'z-10 border-foreground ring-2 ring-foreground' : 'border-border hover:border-foreground/40',
+          // Pale wall colours (warm white) vanish against the light panel, so unselected edges keep a visible outline + shadow.
+          selected ? 'z-10 border-foreground ring-2 ring-foreground' : 'border-foreground/30 shadow-sm hover:border-foreground/60',
           className,
         )}
         style={c ? { backgroundColor: c } : undefined}
@@ -130,7 +131,7 @@ export function WallsPanel({ tiles, isLoading }: { tiles: Tile[]; isLoading: boo
             <Star className="h-3 w-3" /> North · feature wall
           </span>
           <div className="relative w-[200px]" style={{ height: 200 / aspect }}>
-            <div className="absolute inset-3 rounded-sm border border-dashed border-border bg-card/60" />
+            <div className="absolute inset-3 rounded-sm border border-dashed border-foreground/30 bg-card" />
             <Edge s="wall-n" className="inset-x-3 top-0 h-3" />
             {hasSouth && <Edge s="wall-s" className="inset-x-3 bottom-0 h-3" />}
             <Edge s="wall-w" className="inset-y-3 left-0 w-3" />
