@@ -124,6 +124,7 @@ export function SavePanel({ room, stage, shop, onSaveRemote, onOpenDesign, onBro
         quote,
         finishes,
         snapshot: await blobToDataUrl(blob),
+        previewCaption: '2D Room Visualization - Design Preview',
       };
       await (kind === 'pdf' ? downloadQuotationPdf(input) : printQuotationPdf(input));
     });
