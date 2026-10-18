@@ -92,11 +92,23 @@ interface FieldProps {
   disabled?: boolean;
   className?: string;
   required?: boolean;
+  placeholder?: string;
+  /** Shown while the box is empty; defaults to the tile wording. */
+  hint?: string;
 }
 
 /** One box for any tile picture link, with what was recognised and why a link was refused. */
-export function TileImageUrlField({ id, value, onChange, check, disabled, className = "", required = true }: FieldProps) {
-  const hint = "Paste a direct image link (right-click a Google Images result → Copy image address) or a Google Drive sharing link.";
+export function TileImageUrlField({
+  id,
+  value,
+  onChange,
+  check,
+  disabled,
+  className = "",
+  required = true,
+  placeholder = "Paste image URL or Google Drive link",
+  hint = "Paste a direct image link (right-click a Google Images result → Copy image address) or a Google Drive sharing link.",
+}: FieldProps) {
   return (
     <div>
       <input
@@ -110,7 +122,7 @@ export function TileImageUrlField({ id, value, onChange, check, disabled, classN
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={check.status === "error"}
-        placeholder="Paste image URL or Google Drive link"
+        placeholder={placeholder}
         className={`${className} ${check.status === "error" ? "border-destructive/60" : ""}`}
       />
       <div aria-live="polite" className="mt-1.5 min-h-4 text-2xs">
