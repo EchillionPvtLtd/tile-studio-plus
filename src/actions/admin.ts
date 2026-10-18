@@ -6,20 +6,17 @@ import bcrypt from "bcrypt";
 import { getSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { nextInvoiceNo, openInvoiceIfNone, syncInvoiceToPlan, asDate, todayISO, hasOverdueInvoices, syncShopMeta } from "@/lib/payments";
-import { isSafeImageUrl } from "@/lib/loginPosters";
+import { resolveBrandImageUrl } from "@/lib/tileImageUrl";
 import { removeUnreferencedUploads, uploadUrlsIn } from "@/lib/uploads";
 import { asBillingDay, asDurationMonths, expiryAfterMonths, findPackage, firstBillingDate, isCustomPlan, nextBillingDate } from "@/lib/subscriptionPlans";
 import { getSubscriptionPlans } from "@/lib/subscriptionPlansServer";
 import { VISUALIZER_LABEL, accessStates, planAccessRecord, samePlan, withAccessChange, withPlanDefaults, type VisualizerKind } from "@/lib/visualizerAccess";
 import { notifyPlanChanged } from "@/lib/notifications";
 
-/** An uploaded image path, an https link, or (the upload fallback) a small inline image. Anything else is refused. */
+/** An uploaded image path, an image link, a Google Drive sharing link (saved as its picture address) or (the upload fallback) a small inline image. Anything else is refused. */
 function cleanImageUrl(value: string | null | undefined): { ok: true; value: string | null } | { ok: false } {
-  const v = (value ?? "").trim();
-  if (!v) return { ok: true, value: null };
-  if (isSafeImageUrl(v)) return { ok: true, value: v };
-  if (v.length < 1_500_000 && /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(v)) return { ok: true, value: v };
-  return { ok: false };
+  const image = resolveBrandImageUrl(value);
+  return image.ok ? { ok: true, value: image.value } : { ok: false };
 }
 
 // Ensure user is admin
@@ -121,7 +118,7 @@ export async function createUser(
 
   const logo = cleanImageUrl(data.logoUrl);
   if (!logo.ok) {
-    return { errors: { logoUrl: ["Use an uploaded image or an https:// image link."] } };
+    return { errors: { logoUrl: ["Use an uploaded image, an https:// image link or a Google Drive link."] } };
   }
 
   // If SHOP, validate critical required fields
@@ -593,12 +590,12 @@ export async function updateShopDetailsByAdmin(input: UpdateShopDetailsInput) {
     }
     if (input.logoUrl !== undefined) {
       const logo = cleanImageUrl(input.logoUrl);
-      if (!logo.ok) return { success: false, message: "The logo must be an uploaded image or an https:// image link." };
+      if (!logo.ok) return { success: false, message: "The logo must be an uploaded image, an https:// image link or a Google Drive link." };
       updateData.logoUrl = logo.value;
     }
     if (input.coverPhotoUrl !== undefined) {
       const cover = cleanImageUrl(input.coverPhotoUrl);
-      if (!cover.ok) return { success: false, message: "The cover photo must be an uploaded image or an https:// image link." };
+      if (!cover.ok) return { success: false, message: "The cover photo must be an uploaded image, an https:// image link or a Google Drive link." };
       updateData.coverPhotoUrl = cover.value;
     }
     if (input.tileQuota !== undefined) {
@@ -704,7 +701,7 @@ export async function updateAdminProfile({
 
     if (logoUrl !== undefined) {
       const logo = cleanImageUrl(logoUrl);
-      if (!logo.ok) return { success: false, message: "The avatar must be an uploaded image or an https:// image link." };
+      if (!logo.ok) return { success: false, message: "The avatar must be an uploaded image, an https:// image link or a Google Drive link." };
       updateData.logoUrl = logo.value ?? "";
     }
 
