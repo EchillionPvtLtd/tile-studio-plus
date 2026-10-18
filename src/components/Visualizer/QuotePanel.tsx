@@ -7,7 +7,7 @@ import { useRoomStore, PAINTABLE_WALLS } from '@/stores/roomStore';
 import { ROOM_CONFIGS } from '@/types/room';
 import { GROUT_COLORS, TILE_LAYOUT_OPTIONS } from '@/types/tile';
 import { PANEL_TREATMENTS, colourName } from '@/data/wallFinishes';
-import { buildQuote, quoteSurfaces, WASTAGE } from '@/lib/quotation';
+import { buildQuote, quoteSurfaces, surfaceAreaSqFt, WASTAGE } from '@/lib/quotation';
 import { downloadQuotationPdf, printQuotationPdf, type QuotationPdfInput, type ShopProfile } from '@/lib/quotationPdf';
 import { captureSceneImage } from '@/components/Viewer/sceneSnapshot';
 import { formatLKR } from '@/lib/utils';
@@ -81,6 +81,9 @@ export function QuotePanel({ shop, onBrowseTiles }: { shop: ShopProfile | null; 
           lengthFt: s.lengthFt,
           widthFt: s.widthFt,
           heightFt: s.heightFt,
+          wallAreaSqFt: quoteSurfaces(s.roomType)
+            .filter((w) => w.startsWith('wall-'))
+            .reduce((sum, w) => sum + surfaceAreaSqFt(w, s), 0),
         },
         quote,
         finishes,
@@ -169,12 +172,12 @@ export function QuotePanel({ shop, onBrowseTiles }: { shop: ShopProfile | null; 
         </Section>
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-2 pb-2">
         <button type="button" onClick={() => run('download')} disabled={busy !== null} className="ds-btn ds-btn-lg ds-btn-primary w-full">
           {busy === 'download' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
           Download PDF
         </button>
-        <button type="button" onClick={() => run('print')} disabled={busy !== null} className="ds-btn ds-btn-lg ds-btn-outline w-full">
+        <button type="button" onClick={() => run('print')} disabled={busy !== null} className="ds-btn ds-btn-lg ds-btn-outline w-full border-foreground/30">
           {busy === 'print' ? <Loader2 className="h-4 w-4 animate-spin" /> : <Printer className="h-4 w-4" />}
           Print quotation
         </button>
