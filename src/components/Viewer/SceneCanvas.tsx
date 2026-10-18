@@ -12,6 +12,7 @@ import { ShaderWarmup } from './ShaderWarmup';
 
 import { useRoomStore } from '@/stores/roomStore';
 import { onSceneDirty, bumpSceneEpoch } from '@/three/sceneDirty';
+import { detectQuality, type Quality } from '@/three/quality';
 
 const FT2M = 0.3048;
 
@@ -59,7 +60,7 @@ function useStaticShadows() {
   return version;
 }
 
-function SceneContents({ onReady }: { onReady: () => void }) {
+function SceneContents({ onReady, quality }: { onReady: () => void; quality: Quality }) {
   const { lengthFt, widthFt } = useRoomStore();
   const lengthM = lengthFt * FT2M;
   const widthM = widthFt * FT2M;
@@ -81,12 +82,12 @@ function SceneContents({ onReady }: { onReady: () => void }) {
         scale={Math.max(lengthM, widthM) * 1.6}
         blur={2.0}
         far={2}
-        resolution={512}
+        resolution={quality === 'low' ? 256 : 512}
         frames={2}
       />
 
       {/* Compiles every shader in parallel up front, so nothing freezes the page the first time it comes into view */}
-      <ShaderWarmup onReady={onReady} />
+      <ShaderWarmup onReady={onReady} quality={quality} />
 
       {/* Camera Engine & Presets */}
       <CameraEngine />
@@ -97,8 +98,13 @@ function SceneContents({ onReady }: { onReady: () => void }) {
 export function SceneCanvas() {
   const widthFt = useRoomStore((s) => s.widthFt);
   const widthM = widthFt * FT2M;
-  // Starts sharp and steps down on slow GPUs (PerformanceMonitor) so orbiting stays smooth.
-  const [dpr, setDpr] = useState(1.5);
+  // Touch devices and weak machines get lighter settings (no antialiasing, 1x pixels, smaller shadows, fewer lights)
+  const [quality] = useState<Quality>(detectQuality);
+  const low = quality === 'low';
+  const maxDpr = low ? 1 : 1.5;
+  const minDpr = low ? 0.75 : 1;
+  // Starts at the quality's sharpest and steps down on slow GPUs (PerformanceMonitor) so orbiting stays smooth.
+  const [dpr, setDpr] = useState(maxDpr);
   // Nothing is drawn until every shader has compiled, so the page stays responsive instead of freezing on the first frame
   const [ready, setReady] = useState(false);
 
@@ -106,14 +112,14 @@ export function SceneCanvas() {
     <>
     <Canvas
       frameloop={ready ? 'always' : 'never'}
-      shadows="soft"
+      shadows={low ? 'basic' : 'soft'}
       dpr={dpr}
       gl={{
-        antialias: true,
+        antialias: !low,
         powerPreference: 'high-performance',
         toneMapping: THREE.ACESFilmicToneMapping,
         toneMappingExposure: 1.05,
-        shadowMapType: THREE.PCFSoftShadowMap,
+        shadowMapType: low ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap,
       }}
       camera={{
         position: [0, 1.4, widthM * 0.35],
@@ -124,10 +130,10 @@ export function SceneCanvas() {
       style={{ background: 'transparent' }}
     >
       <PerformanceMonitor
-        onDecline={() => setDpr((d) => Math.max(1, d - 0.25))}
-        onIncline={() => setDpr((d) => Math.min(1.5, d + 0.25))}
+        onDecline={() => setDpr((d) => Math.max(minDpr, d - 0.25))}
+        onIncline={() => setDpr((d) => Math.min(maxDpr, d + 0.25))}
       />
-      <SceneContents onReady={() => setReady(true)} />
+      <SceneContents onReady={() => setReady(true)} quality={quality} />
 
       {/* Lets the quotation PDF grab the current view */}
       <SceneSnapshotBridge />
