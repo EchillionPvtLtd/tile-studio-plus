@@ -7,6 +7,15 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    // Same as Tailwind's defaults except sm (640 → 600px), so small tablets in portrait get the
+    // docked-sidebar layout instead of the phone layout.
+    screens: {
+      sm: "600px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     container: {
       center: true,
       padding: "2rem",
