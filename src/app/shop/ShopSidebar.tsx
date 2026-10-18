@@ -169,7 +169,7 @@ export function ShopSidebar({
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     } catch (_) {}
 
-    const isSmallScreen = typeof window !== "undefined" && window.innerWidth < 1024;
+    const isSmallScreen = typeof window !== "undefined" && window.innerWidth < 1280;
 
     if (wasMoved && Math.abs(deltaX) > 20) {
       if (deltaX > 20) {
@@ -193,7 +193,7 @@ export function ShopSidebar({
 
   const handleNavClick = (tabId: ShopTab) => {
     setActiveTab(tabId);
-    if (isMobileOpen && typeof window !== "undefined" && window.innerWidth < 1024) {
+    if (isMobileOpen && typeof window !== "undefined" && window.innerWidth < 1280) {
       setIsMobileOpen(false);
     }
   };
@@ -212,24 +212,8 @@ export function ShopSidebar({
           onKeyDown={(e) => {
             if (e.key === "Escape" || e.key === "Enter") setIsMobileOpen(false);
           }}
-          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-xs transition-opacity lg:hidden"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-xs transition-opacity xl:hidden"
         />
-      )}
-
-      {/* ── FLOATING EDGE ARROW HANDLE WHEN SHRINK/CLOSED ON TABLET (< lg) ── */}
-      {!isMobileOpen && (
-        <div
-          role="button"
-          tabIndex={0}
-          aria-label="Drag or click to open sidebar"
-          onPointerDown={onPointerDownHandle}
-          onPointerMove={onPointerMoveHandle}
-          onPointerUp={(e) => onPointerUpHandle(e, false)}
-          className="fixed left-0 top-20 z-50 flex h-12 w-6 lg:hidden items-center justify-center rounded-r-lg border border-l-0 border-sidebar-foreground/20 bg-sidebar text-sidebar-foreground/70 shadow-sm hover:w-7 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all duration-150 cursor-ew-resize select-none"
-          title="Drag right or click to open side panel"
-        >
-          <ChevronRight className="h-4 w-4 pointer-events-none" />
-        </div>
       )}
 
       {/* ── SIDEBAR CONTAINER (Single-Column, No Scrolling) ───────── */}
@@ -237,9 +221,9 @@ export function ShopSidebar({
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col h-full max-h-screen overflow-visible bg-sidebar border-r border-sidebar-foreground/[0.08] text-sidebar-foreground select-none transition-all duration-200 ease-in-out",
           // Mobile & Tablet responsive slide
-          isMobileOpen ? "translate-x-0 w-[238px] shadow-2xl" : "-translate-x-full lg:translate-x-0",
+          isMobileOpen ? "translate-x-0 w-[238px] shadow-2xl" : "-translate-x-full xl:translate-x-0",
           // Desktop width: 238px expanded or 68px collapsed icon rail
-          isSidebarCollapsed ? "lg:w-[68px]" : "lg:w-[238px]"
+          isSidebarCollapsed ? "xl:w-[68px]" : "xl:w-[238px]"
         )}
       >
         {/* ── FLOATING EDGE ARROW HANDLE (Mounted on Sidebar Outer Edge) ── */}
@@ -257,7 +241,7 @@ export function ShopSidebar({
           className={cn(
             "absolute left-[calc(100%-1px)] top-20 z-50 flex h-12 w-6 items-center justify-center rounded-r-lg border border-l-0 border-sidebar-foreground/20 bg-sidebar text-sidebar-foreground/70 shadow-sm hover:w-7 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all duration-150 cursor-pointer select-none",
             // Visible on mobile when open, always visible on desktop
-            !isMobileOpen ? "hidden lg:flex" : "flex"
+            !isMobileOpen ? "hidden xl:flex" : "flex"
           )}
           title={
             isMobileOpen || isDesktopExpanded
@@ -303,7 +287,7 @@ export function ShopSidebar({
                 <button
                   type="button"
                   onClick={() => setIsMobileOpen(false)}
-                  className="absolute top-2 right-2 flex lg:hidden p-1 rounded-md bg-black/40 text-white backdrop-blur-xs hover:bg-black/60 transition-colors cursor-pointer z-20"
+                  className="absolute top-2 right-2 flex xl:hidden p-1 rounded-md bg-black/40 text-white backdrop-blur-xs hover:bg-black/60 transition-colors cursor-pointer z-20"
                   title="Close sidebar"
                 >
                   <X className="h-3.5 w-3.5" />
