@@ -142,9 +142,9 @@ export function Visualizer2DWorkspace({
   const panelScroll = useRef<HTMLDivElement>(null);
   const roomBeforeEditing = useRef<string | null>(null);
 
-  // Phones and tablets start with canvas visible; studio drawer opens on demand
+  // Only phone screens (< 640px) start collapsed; tablets and desktop stay open side-by-side
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
       setIsSidebarCollapsed(true);
     }
   }, []);
@@ -492,14 +492,14 @@ export function Visualizer2DWorkspace({
         </div>
 
         {/* Right: Undo, Redo, Reset, Compare, Download, 3D, Theme, Expand, Quotation */}
-        <div className="flex flex-1 items-center justify-end gap-1 sm:gap-2">
+        <div className="flex shrink-0 items-center justify-end gap-1 sm:gap-1.5">
           {!editing && (
             <>
               <button
                 type="button"
                 onClick={() => useViz2D.getState().undo()}
                 disabled={!canUndo}
-                className="ds-btn ds-btn-outline w-8 sm:w-9 px-0 cursor-pointer"
+                className="ds-btn ds-btn-outline shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 cursor-pointer"
                 title="Undo (Ctrl+Z)"
                 aria-label="Undo"
               >
@@ -509,7 +509,7 @@ export function Visualizer2DWorkspace({
                 type="button"
                 onClick={() => useViz2D.getState().redo()}
                 disabled={!canRedo}
-                className="ds-btn ds-btn-outline w-8 sm:w-9 px-0 cursor-pointer"
+                className="ds-btn ds-btn-outline shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 cursor-pointer"
                 title="Redo (Ctrl+Y)"
                 aria-label="Redo"
               >
@@ -519,7 +519,7 @@ export function Visualizer2DWorkspace({
                 type="button"
                 onClick={() => useViz2D.getState().resetDesign()}
                 disabled={tiledCount === 0}
-                className="ds-btn ds-btn-outline w-8 sm:w-9 px-0 sm:w-auto sm:px-2.5 cursor-pointer"
+                className="ds-btn ds-btn-outline shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 sm:w-auto sm:px-2.5 cursor-pointer"
                 title="Reset all surfaces: back to original photo"
                 aria-label="Reset tiles"
               >
@@ -531,14 +531,14 @@ export function Visualizer2DWorkspace({
                 onClick={() => useViz2D.getState().setCompare(!compare)}
                 disabled={!stageRoom}
                 className={cn(
-                  'ds-btn w-8 sm:w-9 px-0 sm:w-auto sm:px-3 cursor-pointer',
+                  'ds-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 sm:w-auto sm:px-2.5 cursor-pointer',
                   compare ? 'ds-btn-primary' : 'ds-btn-outline'
                 )}
                 title="Compare before and after"
                 aria-pressed={compare}
               >
                 <Columns2 className="h-4 w-4" />
-                <span className="hidden sm:inline">Compare</span>
+                <span className="hidden md:inline">Compare</span>
               </button>
               {allowDownload && (
                 <DownloadMenu
@@ -554,7 +554,7 @@ export function Visualizer2DWorkspace({
             <button
               type="button"
               onClick={onSwitchTo3D}
-              className="ds-btn ds-btn-outline w-8 sm:w-9 px-0 sm:w-auto sm:px-3.5 cursor-pointer"
+              className="ds-btn ds-btn-outline shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 sm:w-auto sm:px-3 cursor-pointer"
               title="Open the 3D visualizer"
               aria-label="Open 3D visualizer"
             >
@@ -570,7 +570,7 @@ export function Visualizer2DWorkspace({
             type="button"
             onClick={toggleExpandVisualizer}
             className={cn(
-              'ds-btn w-8 sm:w-9 px-0 cursor-pointer',
+              'ds-btn shrink-0 w-8 h-8 sm:w-9 sm:h-9 px-0 cursor-pointer',
               fullscreen || isCanvasExpanded ? 'ds-btn-primary' : 'ds-btn-outline'
             )}
             title={fullscreen || isCanvasExpanded ? 'Exit full screen (Esc)' : 'Expand to full screen'}
@@ -588,7 +588,7 @@ export function Visualizer2DWorkspace({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="fixed bottom-4 left-4 z-40 flex md:hidden items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 py-2 text-xs font-semibold text-foreground shadow-lg backdrop-blur-sm cursor-pointer"
+            className="fixed bottom-4 left-4 z-40 flex sm:hidden items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 py-2 text-xs font-semibold text-foreground shadow-lg backdrop-blur-sm cursor-pointer"
             aria-label="Open studio panel"
           >
             <ChevronRight className="h-4 w-4 stroke-[2.5]" />
@@ -597,15 +597,17 @@ export function Visualizer2DWorkspace({
         )}
 
         {/* Studio Sidebar Panel */}
+        {/* Phone (< 640px): bottom sheet · Tablet & Desktop (>= 640px): docked side-by-side relative column */}
         <aside
           className={cn(
-            'absolute z-20 flex shrink-0 flex-col border-border bg-card shadow-elevated transition-[margin,transform] duration-300 overflow-visible',
-            'inset-x-0 bottom-0 h-[64%] rounded-t-2xl border-t',
-            'md:inset-y-0 md:left-0 md:right-auto md:bottom-auto md:h-auto md:w-[360px] md:rounded-none md:border-r md:border-t-0',
-            'lg:relative lg:shadow-none',
+            'flex shrink-0 flex-col border-border bg-card overflow-visible transition-all duration-300 z-20',
+            // Mobile (< 640px): Bottom sheet
+            'absolute inset-x-0 bottom-0 h-[58%] max-h-[58%] rounded-t-2xl border-t shadow-elevated',
+            // Tablet & Desktop (>= 640px): Docked side-by-side relative column that shrinks smoothly
+            'sm:relative sm:inset-auto sm:h-full sm:rounded-none sm:border-t-0 sm:border-r sm:shadow-none sm:w-[280px] md:w-[320px] lg:w-[360px]',
             isSidebarCollapsed
-              ? 'translate-y-full md:translate-y-0 md:-translate-x-full lg:translate-x-0 lg:-ml-[360px]'
-              : 'translate-y-0 md:translate-x-0'
+              ? 'translate-y-full sm:translate-y-0 sm:-ml-[280px] md:-ml-[320px] lg:-ml-[360px]'
+              : 'translate-y-0 sm:ml-0'
           )}
           aria-hidden={isSidebarCollapsed}
         >
@@ -618,7 +620,7 @@ export function Visualizer2DWorkspace({
               if (e.key === 'Enter' || e.key === ' ') setIsSidebarCollapsed((c) => !c);
             }}
             aria-label={isSidebarCollapsed ? 'Click to show studio panel' : 'Click to hide studio panel'}
-            className="absolute left-[calc(100%-1px)] top-16 z-50 hidden md:flex h-12 w-6 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card text-muted-foreground shadow-sm hover:w-7 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-150 cursor-pointer select-none"
+            className="absolute left-[calc(100%-1px)] top-16 z-50 hidden sm:flex h-12 w-6 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card text-muted-foreground shadow-sm hover:w-7 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-150 cursor-pointer select-none"
             title={isSidebarCollapsed ? 'Show studio panel' : 'Hide studio panel'}
           >
             {!isSidebarCollapsed ? (
@@ -632,16 +634,16 @@ export function Visualizer2DWorkspace({
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(true)}
-            className="flex h-6 w-full shrink-0 items-center justify-center md:hidden cursor-pointer"
+            className="flex h-6 w-full shrink-0 items-center justify-center sm:hidden cursor-pointer"
             aria-label="Close studio panel"
           >
             <span className="h-1 w-10 rounded-full bg-border" />
           </button>
 
-          {/* Desktop Studio Tab Bar (Clicking active tab HIDES it!) */}
+          {/* Studio Tab Bar */}
           {!editing && (
             <nav
-              className="hidden shrink-0 grid-cols-3 gap-1 border-b border-border p-2 md:grid"
+              className="shrink-0 grid grid-cols-3 gap-1 border-b border-border p-1.5 sm:p-2"
               role="tablist"
               aria-label="2D visualizer tabs"
             >
@@ -656,15 +658,15 @@ export function Visualizer2DWorkspace({
                     aria-selected={active}
                     onClick={() => handleTabClick(t.id)}
                     className={cn(
-                      'flex flex-col items-center gap-1 rounded-xl py-2 text-2xs font-semibold transition-colors cursor-pointer',
+                      'flex flex-col items-center gap-0.5 sm:gap-1 rounded-xl py-1.5 sm:py-2 text-[10px] sm:text-2xs font-semibold transition-colors cursor-pointer',
                       active
                         ? 'bg-primary text-primary-foreground shadow-xs'
                         : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                     )}
                     title={active ? `Click to hide ${t.label} panel` : `Open ${t.label} panel`}
                   >
-                    <Icon className="h-4 w-4" />
-                    {t.label}
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span className="truncate">{t.label}</span>
                     {t.id === 'design' && tiledCount > 0 && (
                       <span className="sr-only">{tiledCount} tiled</span>
                     )}
@@ -677,7 +679,7 @@ export function Visualizer2DWorkspace({
           {/* Panel Content Body */}
           <div
             ref={panelScroll}
-            className="custom-scrollbar min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain p-4 pb-8"
+            className="custom-scrollbar min-h-0 flex-1 touch-pan-y overflow-y-auto overscroll-contain p-2.5 sm:p-4 pb-8"
           >
             {editing ? (
               <RoomEditorPanel onCancel={cancelEditing} onSave={saveEditing} />
@@ -777,7 +779,7 @@ export function Visualizer2DWorkspace({
       {/* ── Phone Bottom Thumb Bar (Matches 3D visualizer) ───────── */}
       {!editing && (
         <nav
-          className="grid shrink-0 grid-cols-3 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden z-30"
+          className="grid shrink-0 grid-cols-3 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] sm:hidden z-30"
           aria-label="2D visualizer navigation"
         >
           {TABS.map((t) => {

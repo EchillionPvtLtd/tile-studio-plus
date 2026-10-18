@@ -65,7 +65,7 @@ export function DownloadMenu({ stage, roomName, disabled, onMore }: DownloadMenu
         disabled={disabled || busy !== null}
         aria-haspopup="menu"
         aria-expanded={open}
-        className={cn('ds-btn', open ? 'ds-btn-primary' : 'ds-btn-outline')}
+        className={cn('ds-btn shrink-0 w-8 h-8 sm:w-auto sm:h-9 px-0 sm:px-3', open ? 'ds-btn-primary' : 'ds-btn-outline')}
         title="Download the picture"
       >
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}

@@ -199,18 +199,19 @@ export function DesignPanel({ groups, tiles, isLoadingTiles, leftOut = [] }: { g
                         <div className="w-full text-center text-[9.5px] font-semibold leading-[1.15] tracking-tight">
                           {l.key === 'offset' ? (
                             <>
-                              <span>1/3</span>
-                              <br />
-                              <span>Offset</span>
+                              <span className="block">1/3</span>
+                              <span className="block">Offset</span>
                             </>
                           ) : l.key === 'herringbone' ? (
                             <>
-                              <span>Herring</span>
-                              <br />
-                              <span>bone</span>
+                              <span className="block">Herring-</span>
+                              <span className="block">bone</span>
                             </>
                           ) : (
-                            l.label
+                            <>
+                              <span className="block">&nbsp;</span>
+                              <span className="block truncate">{l.label}</span>
+                            </>
                           )}
                         </div>
                       </button>

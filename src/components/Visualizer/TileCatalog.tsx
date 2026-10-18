@@ -1021,7 +1021,7 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                     : 'border-border hover:border-foreground/30 hover:shadow-xs',
                 )}
               >
-                <div className="relative overflow-hidden bg-muted shrink-0 h-20 sm:h-22">
+                <div className="relative overflow-hidden bg-muted shrink-0 h-18 sm:h-20 md:h-22">
                   <img
                     src={t.previewUrl || t.textureUrl}
                     alt={t.name}
@@ -1029,8 +1029,8 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                   {selected && (
-                    <span className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
-                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                    <span className="absolute right-1.5 top-1.5 flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+                      <Check className="h-3 w-3 sm:h-3.5 sm:w-3.5" strokeWidth={3} />
                     </span>
                   )}
                   {t.finish && (
@@ -1039,11 +1039,11 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                     </span>
                   )}
                 </div>
-                <div className="space-y-0.5 p-2 sm:p-2.5 flex-1 min-w-0 flex flex-col justify-between">
-                  <p className="truncate text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
+                <div className="space-y-0.5 p-1.5 sm:p-2 flex-1 min-w-0 flex flex-col justify-between">
+                  <p className="truncate text-[11px] sm:text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                     {t.name}
                   </p>
-                  <p className="flex items-center justify-between gap-1 text-2xs text-muted-foreground">
+                  <p className="flex items-center justify-between gap-1 text-[10px] sm:text-2xs text-muted-foreground">
                     <span className="truncate">
                       {t.widthMm}×{t.heightMm}
                     </span>

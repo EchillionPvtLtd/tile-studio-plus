@@ -82,9 +82,11 @@ export function VisualizerWorkspaceView() {
     setTimeout(() => setDownloadError(null), 6000);
   };
 
-  // Phones and tablets start with the canvas visible; the studio opens on demand.
+  // Only phones in portrait (< 640px) start with the sidebar collapsed so canvas gets full screen
   useEffect(() => {
-    if (window.innerWidth < 1024) setIsSidebarCollapsed(true);
+    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+      setIsSidebarCollapsed(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -215,8 +217,8 @@ export function VisualizerWorkspaceView() {
   return (
     <div ref={containerRef} className="flex h-dvh select-none flex-col overflow-hidden bg-background text-foreground">
       {/* ── Header ─────────────────────────────────────────────── */}
-      <header className="z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-card px-3 sm:px-4">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <header className="z-30 flex h-14 shrink-0 items-center justify-between gap-2 sm:gap-3 border-b border-border bg-card px-2.5 sm:px-4">
+        <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           {/* Tile Studio Logo */}
           <button
             type="button"
@@ -228,33 +230,33 @@ export function VisualizerWorkspaceView() {
             <img
               src="/Logo/TS+.BK.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain dark:hidden select-none pointer-events-none"
+              className="h-6 sm:h-7 w-auto object-contain dark:hidden select-none pointer-events-none"
             />
             <img
               src="/Logo/TS+.BG.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain hidden dark:block select-none pointer-events-none"
+              className="h-6 sm:h-7 w-auto object-contain hidden dark:block select-none pointer-events-none"
             />
           </button>
 
           {shop && (
             <>
-              <span className="mx-1.5 hidden h-6 w-px bg-border/70 sm:block" />
+              <span className="mx-1 hidden h-6 w-px bg-border/70 sm:block" />
               {shop.logoUrl && (
                 <img
                   src={shop.logoUrl}
                   alt={shop.shopName}
-                  className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-xl border border-border bg-white object-cover shadow-2xs"
+                  className="h-8 w-8 sm:h-9 sm:w-9 shrink-0 rounded-xl border border-border bg-white object-cover shadow-2xs"
                 />
               )}
-              <span className="truncate text-sm sm:text-base font-bold text-foreground tracking-tight">
+              <span className="truncate text-xs sm:text-sm md:text-base font-bold text-foreground tracking-tight max-w-[110px] xs:max-w-[150px] sm:max-w-[200px] md:max-w-[280px]">
                 {shop.shopName}
               </span>
             </>
           )}
         </div>
 
-        <div className="hidden min-w-0 items-center gap-1.5 text-xs text-muted-foreground lg:flex">
+        <div className="hidden min-w-0 items-center gap-1.5 text-xs text-muted-foreground xl:flex">
           <span className="font-semibold text-foreground">{roomLabel}</span>
           {store.activeTemplate && (
             <>
@@ -264,11 +266,11 @@ export function VisualizerWorkspaceView() {
           )}
         </div>
 
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="flex items-center justify-end gap-1 sm:gap-1.5 shrink-0">
           <button
             type="button"
             onClick={store.resetDesign}
-            className="ds-btn ds-btn-outline w-9 px-0"
+            className="ds-btn ds-btn-outline w-8 h-8 sm:w-9 sm:h-9 px-0 cursor-pointer"
             title="Reset room to its default design"
             aria-label="Reset room"
           >
@@ -276,7 +278,7 @@ export function VisualizerWorkspaceView() {
           </button>
           {shop?.downloads.viz3d && <DownloadMenu3D shopName={shop.shopName} roomType={store.roomType} onQuote={() => openTab('quote')} onError={showDownloadError} />}
           {otherAvailable && (
-            <button type="button" onClick={switchTo2D} className="ds-btn ds-btn-outline w-9 px-0 sm:w-auto sm:px-3.5" title="Open the 2D visualizer" aria-label="Open the 2D visualizer">
+            <button type="button" onClick={switchTo2D} className="ds-btn ds-btn-outline w-8 h-8 sm:w-9 sm:h-9 px-0 sm:w-auto sm:px-3 cursor-pointer" title="Open the 2D visualizer" aria-label="Open the 2D visualizer">
               <Images className="h-4 w-4" />
               <span className="hidden sm:inline">2D</span>
             </button>
@@ -285,7 +287,7 @@ export function VisualizerWorkspaceView() {
           <button
             type="button"
             onClick={toggleExpandVisualizer}
-            className={cn('ds-btn w-9 px-0', expanded ? 'ds-btn-primary' : 'ds-btn-outline')}
+            className={cn('ds-btn w-8 h-8 sm:w-9 sm:h-9 px-0 cursor-pointer', expanded ? 'ds-btn-primary' : 'ds-btn-outline')}
             title={expanded ? 'Exit fullscreen (Esc)' : 'Fullscreen'}
             aria-label={expanded ? 'Exit fullscreen' : 'Fullscreen'}
           >
@@ -306,7 +308,7 @@ export function VisualizerWorkspaceView() {
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(false)}
-            className="fixed bottom-4 left-4 z-40 flex md:hidden items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 py-2 text-xs font-semibold text-foreground shadow-lg backdrop-blur-sm cursor-pointer"
+            className="fixed bottom-4 left-4 z-40 flex sm:hidden items-center gap-1.5 rounded-full border border-border bg-card/95 px-3.5 py-2 text-xs font-semibold text-foreground shadow-lg backdrop-blur-sm cursor-pointer"
             aria-label="Open studio panel"
           >
             <ChevronRight className="h-4 w-4 stroke-[2.5]" />
@@ -315,16 +317,17 @@ export function VisualizerWorkspaceView() {
         )}
 
         {/* ── Studio sidebar ─────────────────────────────────────── */}
-        {/* Phone: bottom sheet · Tablet: left drawer over the canvas · Desktop: docked column */}
+        {/* Phone (< 640px): bottom sheet · Tablet & Desktop (>= 640px): docked side-by-side relative column */}
         <aside
           className={cn(
-            'absolute z-20 flex shrink-0 flex-col border-border bg-card shadow-elevated transition-[margin,transform] duration-300 overflow-visible',
-            'inset-x-0 bottom-0 h-[62%] rounded-t-2xl border-t',
-            'md:inset-y-0 md:left-0 md:right-auto md:bottom-auto md:h-auto md:w-[360px] md:rounded-none md:border-r md:border-t-0',
-            'lg:relative lg:shadow-none',
+            'flex shrink-0 flex-col border-border bg-card overflow-visible transition-all duration-300 z-20',
+            // Mobile (< 640px): Bottom sheet
+            'absolute inset-x-0 bottom-0 h-[58%] max-h-[58%] rounded-t-2xl border-t shadow-elevated',
+            // Tablet & Desktop (>= 640px): Docked side-by-side relative column that shrinks smoothly
+            'sm:relative sm:inset-auto sm:h-full sm:rounded-none sm:border-t-0 sm:border-r sm:shadow-none sm:w-[280px] md:w-[320px] lg:w-[360px]',
             isSidebarCollapsed
-              ? 'translate-y-full md:translate-y-0 md:-translate-x-full lg:translate-x-0 lg:-ml-[360px]'
-              : 'translate-y-0 md:translate-x-0',
+              ? 'translate-y-full sm:translate-y-0 sm:-ml-[280px] md:-ml-[320px] lg:-ml-[360px]'
+              : 'translate-y-0 sm:ml-0',
           )}
           aria-hidden={isSidebarCollapsed}
         >
@@ -337,7 +340,7 @@ export function VisualizerWorkspaceView() {
               if (e.key === 'Enter' || e.key === ' ') setIsSidebarCollapsed((c) => !c);
             }}
             aria-label={isSidebarCollapsed ? 'Click to show studio panel' : 'Click to hide studio panel'}
-            className="absolute left-[calc(100%-1px)] top-16 z-50 hidden md:flex h-12 w-6 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card text-muted-foreground shadow-sm hover:w-7 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-150 cursor-pointer select-none"
+            className="absolute left-[calc(100%-1px)] top-16 z-50 hidden sm:flex h-12 w-6 items-center justify-center rounded-r-lg border border-l-0 border-border bg-card text-muted-foreground shadow-sm hover:w-7 hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-all duration-150 cursor-pointer select-none"
             title={isSidebarCollapsed ? 'Show studio panel' : 'Hide studio panel'}
           >
             {!isSidebarCollapsed ? (
@@ -350,13 +353,13 @@ export function VisualizerWorkspaceView() {
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed(true)}
-            className="flex h-6 w-full shrink-0 items-center justify-center md:hidden cursor-pointer"
+            className="flex h-6 w-full shrink-0 items-center justify-center sm:hidden cursor-pointer"
             aria-label="Close studio panel"
           >
             <span className="h-1 w-10 rounded-full bg-border" />
           </button>
 
-          <nav className="hidden shrink-0 grid-cols-4 gap-1 border-b border-border p-2 md:grid" role="tablist" aria-label="Studio">
+          <nav className="shrink-0 grid grid-cols-4 gap-1 border-b border-border p-1.5 sm:p-2" role="tablist" aria-label="Studio">
             {TABS.map((t) => {
               const Icon = t.icon;
               const active = activeStudioTab === t.id;
@@ -368,12 +371,12 @@ export function VisualizerWorkspaceView() {
                   aria-selected={active}
                   onClick={() => openTab(t.id)}
                   className={cn(
-                    'flex flex-col items-center gap-1 rounded-xl py-2 text-2xs font-semibold transition-colors',
-                    active ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                    'flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 sm:py-2 text-[10px] sm:text-2xs font-semibold transition-colors cursor-pointer select-none',
+                    active ? 'bg-primary text-primary-foreground shadow-xs' : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  {t.label}
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="truncate max-w-full">{t.label}</span>
                 </button>
               );
             })}
@@ -392,26 +395,20 @@ export function VisualizerWorkspaceView() {
           <SceneCanvas />
 
           {editing && (
-            <div
-              className={cn(
-                'pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-border bg-card/90 px-3 py-1.5 text-xs shadow-sm backdrop-blur',
-                !isSidebarCollapsed && 'md:max-lg:left-[376px]',
-              )}
-            >
+            <div className="pointer-events-none absolute left-4 top-4 z-10 flex items-center gap-2 rounded-full border border-border bg-card/90 px-3 py-1.5 text-xs shadow-sm backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
               <span className="text-muted-foreground">Editing</span>
               <span className="font-semibold text-foreground">{editing}</span>
             </div>
           )}
 
-          {/* On tablets the studio drawer overlays the canvas, so keep the controls clear of it. */}
-          <CanvasToolbar className={!isSidebarCollapsed ? "md:max-lg:pl-[376px]" : undefined} />
+          <CanvasToolbar />
         </main>
       </div>
 
-      {/* ── Phone tab bar (thumb reach) ─────────────────────────── */}
+      {/* ── Phone tab bar (thumb reach, only on mobile < 640px) ───── */}
       <nav
-        className="grid shrink-0 grid-cols-4 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] md:hidden"
+        className="grid shrink-0 grid-cols-4 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] sm:hidden"
         aria-label="Studio"
       >
         {TABS.map((t) => {
