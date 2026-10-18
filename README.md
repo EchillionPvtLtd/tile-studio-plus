@@ -36,16 +36,13 @@ Open [http://localhost:3000](http://localhost:3000)
 ```bash
 npm run lint        # ESLint (errors fail; existing warnings are being cleaned up gradually)
 npm run typecheck   # tsc --noEmit
-npm test            # Vitest: auth, payments, uploads, URL safety, login rate limit, the 2D visualizer
+npm test            # Vitest: auth, payments, uploads, URL safety, sign-in, login posters, the 2D visualizer
 ```
 
 ### Environment variables
 | Variable | Purpose |
 |---|---|
 | `JWT_SECRET` | Signs session cookies. Required in production, at least 32 random characters. Put it in `.env.local`. |
-| `REDIS_URL` | Optional. Shares the sign-in rate limit between server instances. Without it the limit is kept in memory. |
-| `TRUSTED_PROXY_HEADER` | Optional. The header your proxy/CDN sets with the visitor's IP (`cf-connecting-ip`, `x-real-ip`, `x-forwarded-for`). Without it the sign-in limit counts per email only, because other headers can be forged. |
-| `TRUSTED_PROXY_HOPS` | Only for `x-forwarded-for`: how many trusted proxies append to it (default `1`). |
 
 ## Features (Phase 1)
 - 🏠 7 room types with default dimensions
