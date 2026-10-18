@@ -53,6 +53,26 @@ function parseDrive(u: URL): { id: string } | { problem: "folder" | "document" |
 }
 
 /**
+ * A showroom logo or banner: a file uploaded to this app, a small embedded picture, or a link. Links go through
+ * the same rules as tile pictures, so a Google Drive sharing link is saved as the picture address it stands for.
+ * An empty value is allowed and means "no picture".
+ */
+export function resolveBrandImageUrl(input: unknown): { ok: true; value: string | null } | { ok: false; error: string } {
+  const raw = typeof input === "string" ? input.trim() : "";
+  if (!raw) return { ok: true, value: null };
+  if (/^\/uploads\/[\w.-]+$/.test(raw)) return { ok: true, value: raw };
+  if (raw.length < 1_500_000 && /^data:image\/(png|jpeg|webp|gif);base64,[A-Za-z0-9+/=]+$/.test(raw)) return { ok: true, value: raw };
+  const resolved = resolveTileImageUrl(raw);
+  return resolved.ok ? { ok: true, value: resolved.url } : { ok: false, error: resolved.error };
+}
+
+/** What to show in a preview for a logo or banner link as typed: a Drive link shows its picture, anything else shows as is. */
+export function brandImageSrc(input: string): string {
+  const resolved = resolveBrandImageUrl(input);
+  return resolved.ok ? (resolved.value ?? "") : input.trim();
+}
+
+/**
  * Works out what a pasted link points at.
  *  - Google Drive sharing links (file/d/…, open?id=, uc?id=, thumbnail?id=) become a direct picture address.
  *  - A Google Images result address (google.com/imgres?imgurl=…) gives the picture it names.
