@@ -6,7 +6,8 @@ import { getSession } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import path from "path";
 import fs from "fs/promises";
-import { isSafeImageUrl, isSafeLinkUrl } from "@/lib/loginPosters";
+import { isSafeLinkUrl } from "@/lib/loginPosters";
+import { resolveTileImageUrl } from "@/lib/tileImageUrl";
 
 async function checkAdmin() {
   const session = await getSession();
@@ -17,7 +18,15 @@ async function checkAdmin() {
 
 const posterSchema = z
   .object({
-    imageUrl: z.string().trim().refine(isSafeImageUrl, "Upload an image or paste an https:// image link"),
+    // A Google Drive sharing link or a direct image link, resolved by the same rules the tile forms use.
+    // Posters added before uploads were removed keep their /uploads/ picture.
+    imageUrl: z.string().trim().transform((value, ctx) => {
+      if (/^\/uploads\/[\w.-]+$/.test(value)) return value;
+      const resolved = resolveTileImageUrl(value);
+      if (resolved.ok) return resolved.url;
+      ctx.addIssue({ code: "custom", message: resolved.error });
+      return z.NEVER;
+    }),
     tag: z.string().trim().max(40, "Tag is too long (max 40)").default(""),
     title: z.string().trim().min(1, "Headline is required").max(120, "Headline is too long (max 120)"),
     body: z.string().trim().max(220, "Description is too long (max 220)").default(""),
@@ -95,7 +104,7 @@ export async function deletePoster(id: string): Promise<PosterResult> {
   try {
     await checkAdmin();
     const poster = await prisma.loginPoster.delete({ where: { id } });
-    // Remove the uploaded file too (only ones this feature created; never external or logo files).
+    // Posters from before uploads were removed may still own an uploaded file; remove it too (never external or logo files).
     const match = /^\/uploads\/(poster-[\w.-]+)$/.exec(poster.imageUrl);
     if (match) {
       await fs.unlink(path.join(process.cwd(), "public", "uploads", match[1])).catch(() => {});
