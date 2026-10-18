@@ -444,7 +444,7 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
               name="logoUrl"
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
-              placeholder="https://images.unsplash.com/... or Cloudinary"
+              placeholder="Image link or Google Drive link"
               className="ds-field"
             />
           </div>
