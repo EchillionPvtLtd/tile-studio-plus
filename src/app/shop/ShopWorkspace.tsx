@@ -9,6 +9,7 @@ import { useThemeStore, useThemeScope } from "@/stores/themeStore";
 import { cn, formatLKR } from "@/lib/utils";
 import { AddTileDrawer } from "./AddTileDrawer";
 import { TileImageUrlField, useTileImageCheck } from "@/components/TileImageUrl";
+import { brandImageSrc } from "@/lib/tileImageUrl";
 import { ShopTileCatalog } from "./ShopTileCatalog";
 import { ShowroomKioskCard } from "./ShowroomKioskCard";
 import { ShopSidebar } from "./ShopSidebar";
@@ -2286,18 +2287,18 @@ export function ShopWorkspace({
                           <div
                             key={tier.id}
                             className={cn(
-                              "relative rounded-[1.5rem] p-4 sm:p-6 lg:p-7 bg-black text-white border transition-all duration-300 flex flex-col justify-between group shadow-xl",
+                              "relative rounded-[1.5rem] p-4 sm:p-6 lg:p-7 bg-card dark:bg-black text-foreground border transition-all duration-300 flex flex-col justify-between group shadow-xl",
                               isCurrent
                                 ? "border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg shadow-emerald-500/15"
                                 : tier.isPopular
-                                  ? "border-zinc-700 hover:border-zinc-500 ring-1 ring-white/10"
-                                  : "border-zinc-800 hover:border-zinc-600"
+                                  ? "border-border hover:border-foreground/40 ring-1 ring-foreground/5"
+                                  : "border-border hover:border-foreground/40"
                             )}
                           >
                             {/* Top Section: Plan Name, Badges, Price & Quota */}
                             <div>
                               <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-base sm:text-lg text-white tracking-wide truncate">
+                                <h3 className="font-bold text-base sm:text-lg text-foreground tracking-wide truncate">
                                   {tier.name.trim().toLowerCase().endsWith("plan") ? tier.name : `${tier.name} Plan`}
                                 </h3>
                                 {isCurrent ? (
@@ -2305,7 +2306,7 @@ export function ShopWorkspace({
                                     <Check className="w-3 h-3 stroke-[3]" /> Activated
                                   </span>
                                 ) : tier.isPopular ? (
-                                  <span className="bg-zinc-800 border border-zinc-700 text-zinc-200 px-2.5 py-0.5 rounded-full text-2xs font-bold tracking-wider uppercase shrink-0">
+                                  <span className="bg-muted border border-border text-foreground px-2.5 py-0.5 rounded-full text-2xs font-bold tracking-wider uppercase shrink-0">
                                     Popular
                                   </span>
                                 ) : null}
@@ -2313,14 +2314,14 @@ export function ShopWorkspace({
 
                               {/* Price Display from Uiverse card */}
                               <div className="flex items-baseline gap-1 mt-1">
-                                <span className="text-xl sm:text-3xl lg:text-[2.5rem] font-light tracking-tight text-white font-mono leading-none">
+                                <span className="text-xl sm:text-3xl lg:text-[2.5rem] font-light tracking-tight text-foreground font-mono leading-none">
                                   {displayPrice}
                                 </span>
-                                <span className="text-xs text-zinc-400 font-normal ml-1">
+                                <span className="text-xs text-muted-foreground font-normal ml-1">
                                   {periodLabel}
                                 </span>
                               </div>
-                              <p className="text-2xs font-mono text-zinc-400 mt-2">
+                              <p className="text-2xs font-mono text-muted-foreground mt-2">
                                 {tier.quotaLabel || `${tier.tileQuota} storage quota`}
                               </p>
 
@@ -2330,25 +2331,25 @@ export function ShopWorkspace({
                                   type="button"
                                   disabled
                                   aria-disabled="true"
-                                  className="mt-6 w-full rounded-full border-2 border-emerald-500 bg-emerald-500/15 text-emerald-400 py-2.5 px-6 text-sm font-bold text-center cursor-default select-none outline-none flex items-center justify-center gap-2 shadow-sm"
+                                  className="mt-6 w-full rounded-full border-2 border-emerald-500 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 py-2.5 px-6 text-sm font-bold text-center cursor-default select-none outline-none flex items-center justify-center gap-2 shadow-sm"
                                 >
-                                  <Check className="w-4 h-4 stroke-[3] text-emerald-400" />
+                                  <Check className="w-4 h-4 stroke-[3] text-emerald-700 dark:text-emerald-400" />
                                   <span>Activated</span>
                                 </button>
                               ) : isDowngrade ? (
                                 <button
                                   type="button"
                                   onClick={() => setUpgradeModalPlan({ name: tier.name, price: tier.price, isDowngrade: true })}
-                                  className="mt-6 w-full rounded-full border-2 border-amber-400/80 bg-amber-400/10 hover:bg-amber-400 text-amber-300 hover:text-black py-2.5 px-6 text-sm font-bold text-center transition-all duration-200 cursor-pointer outline-none flex items-center justify-center gap-1.5 group/btn shadow-sm active:scale-[0.98]"
+                                  className="mt-6 w-full rounded-full border-2 border-amber-400/80 bg-amber-400/10 hover:bg-amber-400 text-amber-700 dark:text-amber-300 hover:text-black py-2.5 px-6 text-sm font-bold text-center transition-all duration-200 cursor-pointer outline-none flex items-center justify-center gap-1.5 group/btn shadow-sm active:scale-[0.98]"
                                 >
                                   <span>Request Downgrade</span>
-                                  <ArrowDownLeft className="w-4 h-4 text-amber-400 group-hover/btn:text-black group-hover/btn:-translate-x-0.5 group-hover/btn:translate-y-0.5 transition-transform stroke-[2.5]" />
+                                  <ArrowDownLeft className="w-4 h-4 text-amber-700 dark:text-amber-400 group-hover/btn:text-black group-hover/btn:-translate-x-0.5 group-hover/btn:translate-y-0.5 transition-transform stroke-[2.5]" />
                                 </button>
                               ) : (
                                 <button
                                   type="button"
                                   onClick={() => setUpgradeModalPlan({ name: tier.name, price: tier.price, isDowngrade: false })}
-                                  className="mt-6 w-full rounded-full border-2 border-white bg-white hover:bg-transparent text-black hover:text-white py-2.5 px-6 text-sm font-bold text-center transition-all duration-200 cursor-pointer outline-none flex items-center justify-center gap-1.5 group/btn shadow-sm active:scale-[0.98]"
+                                  className="mt-6 w-full rounded-full border-2 border-primary bg-primary hover:bg-transparent text-primary-foreground hover:text-foreground py-2.5 px-6 text-sm font-bold text-center transition-all duration-200 cursor-pointer outline-none flex items-center justify-center gap-1.5 group/btn shadow-sm active:scale-[0.98]"
                                 >
                                   <span>Request Upgrade</span>
                                   <ArrowUpRight className="w-4 h-4 opacity-70 group-hover/btn:opacity-100 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
@@ -2357,11 +2358,11 @@ export function ShopWorkspace({
                             </div>
 
                             {/* Features List (.lists and .list from Uiverse card) */}
-                            <div className="mt-8 pt-5 border-t border-zinc-800/80">
-                              <span className="text-2xs font-bold uppercase tracking-wider text-zinc-400 block mb-3.5">
+                            <div className="mt-8 pt-5 border-t border-border">
+                              <span className="text-2xs font-bold uppercase tracking-wider text-muted-foreground block mb-3.5">
                                 Included Capabilities
                               </span>
-                              <ul className="flex flex-col gap-3 font-normal text-sm text-white">
+                              <ul className="flex flex-col gap-3 font-normal text-sm text-foreground">
                                 {tier.features.map((f, i) => (
                                   <li key={i} className="flex items-center">
                                     <svg
@@ -2370,7 +2371,7 @@ export function ShopWorkspace({
                                       viewBox="0 0 24 24"
                                       className={cn(
                                         "h-4 w-4 shrink-0",
-                                        isCurrent ? "text-emerald-400 fill-emerald-400" : "text-white fill-white"
+                                        isCurrent ? "text-emerald-600 fill-emerald-600 dark:text-emerald-400 dark:fill-emerald-400" : "text-foreground fill-foreground"
                                       )}
                                     >
                                       <path
@@ -2380,7 +2381,7 @@ export function ShopWorkspace({
                                         fillRule="evenodd"
                                       />
                                     </svg>
-                                    <span className="ml-3 text-xs sm:text-sm text-zinc-300 font-medium leading-snug">
+                                    <span className="ml-3 text-xs sm:text-sm text-muted-foreground font-medium leading-snug">
                                       {f}
                                     </span>
                                   </li>
@@ -2600,8 +2601,8 @@ export function ShopWorkspace({
                   <ShowroomPreview
                     name={profileForm.shopName}
                     description={profileForm.details}
-                    logoUrl={brandingForm.logoUrl}
-                    coverUrl={brandingForm.coverPhotoUrl}
+                    logoUrl={brandImageSrc(brandingForm.logoUrl)}
+                    coverUrl={brandImageSrc(brandingForm.coverPhotoUrl)}
                   />
                   </div>
                 )}
@@ -2610,11 +2611,11 @@ export function ShopWorkspace({
                   <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_400px]">
                   <form onSubmit={handleSaveBranding}>
                     <SettingsCard title="Branding" description="Your logo and cover banner.">
-                      <SettingsRow label="Logo link" htmlFor="brand-logo" hint="A transparent PNG at least 400px wide looks best.">
+                      <SettingsRow label="Logo link" htmlFor="brand-logo" hint="Paste an image link or a Google Drive share link. A transparent PNG at least 400px wide looks best.">
                         <div className="flex items-center gap-3">
                           <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border bg-white">
                             {brandingForm.logoUrl ? (
-                              <img src={brandingForm.logoUrl} alt="Logo preview" className="h-full w-full object-cover" />
+                              <img src={brandImageSrc(brandingForm.logoUrl)} alt="Logo preview" className="h-full w-full object-cover" />
                             ) : (
                               <Store className="h-5 w-5 text-neutral-400" />
                             )}
@@ -2624,7 +2625,7 @@ export function ShopWorkspace({
                             type="url"
                             value={brandingForm.logoUrl}
                             onChange={(e) => setBrandingForm({ ...brandingForm, logoUrl: e.target.value.trim() })}
-                            placeholder="https://…/logo.png"
+                            placeholder="Image link or Google Drive link"
                             className="ds-field min-w-0 flex-1"
                           />
                         </div>
@@ -2632,16 +2633,16 @@ export function ShopWorkspace({
                       <SettingsRow
                         label="Cover banner link"
                         htmlFor="brand-cover"
-                        hint="Shown on your dashboard and above the 3D visualizer. Best at 1600×500, JPG or WebP, under 500 KB."
+                        hint="Paste an image link or a Google Drive share link. Shown on your dashboard and above the 3D visualizer. Best at 1600×500, JPG or WebP."
                       >
                         {brandingForm.coverPhotoUrl && (
                           <div className="aspect-[16/5] w-full overflow-hidden rounded-xl border border-border bg-muted">
                             <BannerImage
-                              src={brandingForm.coverPhotoUrl}
+                              src={brandImageSrc(brandingForm.coverPhotoUrl)}
                               alt="Cover banner preview"
                               errorFallback={
                                 <div role="alert" className="flex h-full items-center justify-center bg-destructive-muted px-4 text-center text-xs font-semibold text-destructive">
-                                  This link could not be loaded as an image. Use a direct link to a .jpg, .png or .webp file.
+                                  This link could not be loaded as an image. Use a direct image link or a public Google Drive share link.
                                 </div>
                               }
                             />
@@ -2652,7 +2653,7 @@ export function ShopWorkspace({
                           type="url"
                           value={brandingForm.coverPhotoUrl}
                           onChange={(e) => setBrandingForm({ ...brandingForm, coverPhotoUrl: e.target.value.trim() })}
-                          placeholder="https://…/banner.jpg"
+                          placeholder="Image link or Google Drive link"
                           className="ds-field"
                         />
                       </SettingsRow>
@@ -2676,8 +2677,8 @@ export function ShopWorkspace({
                   <ShowroomPreview
                     name={profileForm.shopName}
                     description={profileForm.details}
-                    logoUrl={brandingForm.logoUrl}
-                    coverUrl={brandingForm.coverPhotoUrl}
+                    logoUrl={brandImageSrc(brandingForm.logoUrl)}
+                    coverUrl={brandImageSrc(brandingForm.coverPhotoUrl)}
                   />
                   </div>
                 )}
