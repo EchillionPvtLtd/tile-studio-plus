@@ -170,8 +170,8 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
           ))}
         </div>
 
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
-          <div className="relative min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative min-w-[12rem] flex-1">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
             <input
               type="search"
@@ -182,7 +182,7 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
               className="ds-field w-full pl-10"
             />
           </div>
-          <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)} aria-label="Filter by subscription plan" className="ds-field md:w-52">
+          <select value={planFilter} onChange={(e) => setPlanFilter(e.target.value)} aria-label="Filter by subscription plan" className="ds-field min-w-0 flex-1 sm:w-52 sm:flex-none">
             <option value="all">All plans</option>
             {plans.map((p) => (
               <option key={p} value={p}>
@@ -190,7 +190,7 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
               </option>
             ))}
           </select>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as "all" | AccessSummary)} aria-label="Filter by access status" className="ds-field md:w-52">
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as "all" | AccessSummary)} aria-label="Filter by access status" className="ds-field min-w-0 flex-1 sm:w-52 sm:flex-none">
             <option value="all">Any access</option>
             {SUMMARIES.map((s) => (
               <option key={s} value={s}>
@@ -211,10 +211,10 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
         </div>
       ) : (
         <>
-          {/* Tablet and desktop */}
-          <div className="ds-card hidden overflow-hidden md:block">
+          {/* The same table at every width; it scrolls sideways inside its card on narrow screens */}
+          <div className="ds-card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-border text-left text-xs">
+              <table className="min-w-[44rem] w-full divide-y divide-border text-left text-xs">
                 <thead className="bg-muted text-2xs font-bold uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="px-5 py-4">Shop</th>
@@ -232,7 +232,7 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
                 <tbody className="divide-y divide-border/60">
                   {visible.map((r) => (
                     <tr key={r.shop.id} className="transition-colors hover:bg-accent">
-                      <td className="px-5 py-4 font-bold text-foreground">{r.name}</td>
+                      <td className="px-5 py-4 font-bold text-foreground whitespace-nowrap">{r.name}</td>
                       <td className="px-5 py-4 font-mono text-2xs text-muted-foreground">{r.shop.email}</td>
                       <td className="px-5 py-4">
                         <span className="rounded-full bg-muted px-2.5 py-1 text-2xs font-bold text-foreground/80">{planLabel(r.plan)}</span>
@@ -246,35 +246,6 @@ export function VisualizerAccessPanel({ shops }: { shops: Shop[] }) {
               </table>
             </div>
           </div>
-
-          {/* Phone */}
-          <ul className="space-y-3 md:hidden">
-            {visible.map((r) => (
-              <li key={r.shop.id} className="ds-card space-y-4 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-foreground">{r.name}</p>
-                    <p className="truncate font-mono text-2xs text-muted-foreground">{r.shop.email}</p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-muted px-2.5 py-1 text-2xs font-bold text-foreground/80">{planLabel(r.plan)}</span>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground"><ImageIcon className="h-4 w-4" aria-hidden="true" />2D Visualizer</span>
-                    {toggle(r, "viz2d")}
-                  </div>
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-foreground"><Box className="h-4 w-4" aria-hidden="true" />3D Visualizer</span>
-                    {toggle(r, "viz3d")}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
-                  <span className="text-2xs font-bold uppercase tracking-wider text-muted-foreground">Current access</span>
-                  {status(r)}
-                </div>
-              </li>
-            ))}
-          </ul>
         </>
       )}
       <p className="text-2xs text-muted-foreground">
