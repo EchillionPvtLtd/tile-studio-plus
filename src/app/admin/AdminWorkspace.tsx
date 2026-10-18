@@ -142,12 +142,10 @@ export interface PaymentRecord {
 
 interface AdminWorkspaceProps {
   shops: any[];
-  totalDesigns: number;
   totalTiles: number;
   activeSubs: number;
   estimatedTileValue: number;
   tileCategories: { category: string; count: number }[];
-  roomTypes?: { roomType: string; count: number }[];
   builtInTilesCount?: number;
   recentDesigns?: any[];
   adminUser?: {
@@ -174,13 +172,11 @@ interface AdminWorkspaceProps {
 }
 
 export function AdminWorkspace({ 
-  shops, 
-  totalDesigns, 
-  totalTiles, 
+  shops,
+  totalTiles,
   activeSubs, 
   estimatedTileValue,
   tileCategories,
-  roomTypes = [],
   builtInTilesCount = 0,
   recentDesigns = [],
   adminUser,
@@ -1158,16 +1154,16 @@ export function AdminWorkspace({
         />
 
         {/* ── MAIN CONTENT AREA ────────────────────────────────────────── */}
-        <div className={`flex-1 min-w-0 transition-all duration-200 pl-0 ${isSidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[272px]"}`}>
+        <div className={`flex-1 min-w-0 transition-all duration-200 pl-0 ${isSidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[272px]"}`}>
           
           {/* Top Header Bar */}
           <header className="sticky top-0 z-30 bg-background/90 backdrop-blur-md px-4 py-4 sm:px-8 sm:py-5 flex items-center justify-between gap-4 border-b border-border">
             <div className="flex min-w-0 flex-1 items-center gap-3.5">
-              {/* Mobile drawer toggle (< lg) */}
+              {/* Mobile drawer toggle (< xl) */}
               <button
                 type="button"
                 onClick={() => setIsMobileOpen(true)}
-                className="ds-btn ds-btn-outline w-9 px-0 lg:hidden"
+                className="ds-btn ds-btn-outline w-9 px-0 xl:hidden"
                 title="Open navigation menu"
               >
                 <PanelLeftOpen className="h-4 w-4" />
@@ -1178,7 +1174,7 @@ export function AdminWorkspace({
                 <button
                   type="button"
                   onClick={() => setIsSidebarCollapsed(false)}
-                  className="ds-btn ds-btn-outline hidden lg:inline-flex"
+                  className="ds-btn ds-btn-outline hidden xl:inline-flex"
                   title="Expand sidebar"
                 >
                   <PanelLeftOpen className="h-4 w-4" />
@@ -2305,6 +2301,7 @@ export function AdminWorkspace({
                 .reduce((sum, p) => sum + p.amountRaw, 0);
               const collectedAllTime = paymentHistory.filter((p) => p.status === "Received").reduce((sum, p) => sum + p.amountRaw, 0);
               const failedAmount = paymentHistory.filter((p) => p.status === "Failed").reduce((sum, p) => sum + p.amountRaw, 0);
+              const recentReceived = paymentHistory.filter((p) => p.status === "Received").sort((a, b) => b.timestamp - a.timestamp).slice(0, 5);
 
               const isFilterActive = 
                 historyStatusFilter !== "all" || 
@@ -2321,40 +2318,7 @@ export function AdminWorkspace({
                   {/* ── SUB-TAB 1: PAYMENTS OVERVIEW ── */}
                   {paymentSubTab === "overview" && (
                     <div className="space-y-6">
-                      {/* Revenue KPI Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        <div className="ds-card p-6">
-                          <span className="text-2xs font-bold text-muted-foreground uppercase tracking-wider block">Estimated MRR</span>
-                          <div className="mt-2 text-2xl sm:text-3xl font-bold text-foreground font-mono">
-                            {formatLKR(estimatedMRR)}
-                          </div>
-                          <span className="mt-1 block text-xs text-muted-foreground">Monthly recurring revenue (LKR)</span>
-                        </div>
-
-                        <div className="ds-card p-6">
-                          <span className="text-2xs font-bold text-muted-foreground uppercase tracking-wider block">Projected ARR</span>
-                          <div className="mt-2 text-2xl sm:text-3xl font-bold text-foreground font-mono">
-                            {formatLKR(estimatedARR)}
-                          </div>
-                          <span className="text-xs text-muted-foreground font-medium mt-1 block">Annualized run rate (LKR)</span>
-                        </div>
-
-                        <div className="ds-card p-6">
-                          <span className="text-2xs font-bold text-muted-foreground uppercase tracking-wider block">Average Revenue Per Shop</span>
-                          <div className="mt-2 text-2xl sm:text-3xl font-bold text-foreground font-mono">
-                            {formatLKR(arpu)}
-                          </div>
-                          <span className="text-xs text-muted-foreground font-medium mt-1 block">Across {activeSubs} active accounts</span>
-                        </div>
-
-                        <div className="rounded-3xl bg-inverse text-inverse-foreground p-6 shadow-md">
-                          <span className="text-2xs font-bold text-inverse-foreground/60 uppercase tracking-wider block">Billing Conversion</span>
-                          <div className="mt-2 text-3xl font-bold text-inverse-foreground font-mono">{billingRate}%</div>
-                          <span className="text-xs text-inverse-foreground/75 font-medium mt-1 block">{activeSubs} of {shops.length} converted</span>
-                        </div>
-                      </div>
-
-                      {/* Collected vs still owed: these figures come straight from the ledger */}
+                      {/* Headline numbers */}
                       <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                         <div className="ds-card p-6">
                           <span className="block text-2xs font-bold uppercase tracking-wider text-muted-foreground">Collected this month</span>
@@ -2362,80 +2326,127 @@ export function AdminWorkspace({
                           <span className="mt-1 block text-xs text-muted-foreground">{formatLKR(collectedAllTime)} collected in total</span>
                         </div>
                         <div className="ds-card p-6">
-                          <span className="block text-2xs font-bold uppercase tracking-wider text-muted-foreground">Waiting to be collected</span>
-                          <div className="mt-2 font-mono text-2xl font-bold text-warning sm:text-3xl">{formatLKR(totalPendingAmountLKR)}</div>
+                          <span className="block text-2xs font-bold uppercase tracking-wider text-muted-foreground">Outstanding</span>
+                          <div className={`mt-2 font-mono text-2xl font-bold sm:text-3xl ${totalPendingAmountLKR > 0 ? "text-warning" : "text-foreground"}`}>{formatLKR(totalPendingAmountLKR)}</div>
                           <span className="mt-1 block text-xs text-muted-foreground">
-                            {pendingPaymentsList.length} invoice{pendingPaymentsList.length === 1 ? "" : "s"}
-                            {overdueCount > 0 ? `, ${overdueCount} overdue` : ""}
+                            {totalPendingAmountLKR === 0 && pendingPaymentsList.length === 0
+                              ? "All invoices settled"
+                              : `${pendingPaymentsList.length} invoice${pendingPaymentsList.length === 1 ? "" : "s"}${overdueCount > 0 ? `, ${overdueCount} overdue` : ""}`}
+                            {failedAmount > 0 && <span className="font-semibold text-destructive"> · {formatLKR(failedAmount)} failed</span>}
                           </span>
                         </div>
                         <div className="ds-card p-6">
-                          <span className="block text-2xs font-bold uppercase tracking-wider text-muted-foreground">Failed payments</span>
-                          <div className={`mt-2 font-mono text-2xl font-bold sm:text-3xl ${failedAmount > 0 ? "text-destructive" : "text-foreground"}`}>{formatLKR(failedAmount)}</div>
-                          <span className="mt-1 block text-xs text-muted-foreground">Retry or change the status from the ledger</span>
+                          <span className="block text-2xs font-bold uppercase tracking-wider text-muted-foreground">Monthly recurring revenue</span>
+                          <div className="mt-2 font-mono text-2xl font-bold text-foreground sm:text-3xl">{formatLKR(estimatedMRR)}</div>
+                          <span className="mt-1 block text-xs text-muted-foreground">
+                            {activeSubs} active showroom{activeSubs === 1 ? "" : "s"} · {formatLKR(estimatedARR)} a year
+                          </span>
                         </div>
                       </div>
 
-                      {/* Subscription Package Breakdown in LKR */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        {packageChoices(livePlans).filter((c) => c.value !== "Free Trial").map((choice) => {
-                          const pkg = choice.value;
-                          const isMine = (s: any) => normalizePlan(s.subscriptionPackage).toLowerCase() === pkg.toLowerCase() && s.subscriptionActive;
-                          const count = shops.filter(isMine).length;
-                          const price = choice.price;
-                          const total = shops
-                            .filter(isMine)
-                            .reduce((sum, s) => sum + getMonthlyPrice(s), 0);
-                          return (
-                            <div key={pkg} className="ds-card p-6 flex flex-col justify-between">
-                              <div>
-                                <div className="flex items-center justify-between">
-                                  <h3 className="font-semibold text-base text-foreground">{choice.label}</h3>
-                                  <span className="text-xs font-semibold font-mono text-foreground">{pkg === "Custom" ? "Per quote" : `${formatLKR(price)}/mo`}</span>
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  {count} active showroom{count !== 1 ? "s" : ""}
-                                </p>
-                              </div>
-                              <div className="mt-6 pt-4 border-t border-border/60 flex items-center justify-between">
-                                <span className="text-xs text-muted-foreground">Total Contribution:</span>
-                                <span className="text-base font-bold text-foreground font-mono">{formatLKR(total)}/mo</span>
-                              </div>
+                      {/* Monthly revenue by plan */}
+                      {(() => {
+                        const planRows = packageChoices(livePlans)
+                          .filter((c) => c.value !== "Free Trial")
+                          .map((choice) => {
+                            const mine = shops.filter((s) => normalizePlan(s.subscriptionPackage).toLowerCase() === choice.value.toLowerCase() && s.subscriptionActive);
+                            return { choice, count: mine.length, total: mine.reduce((sum, s) => sum + getMonthlyPrice(s), 0) };
+                          });
+                        return (
+                          <div className="ds-card overflow-hidden">
+                            <div className="border-b border-border px-6 py-4">
+                              <h3 className="text-base font-bold text-foreground">Monthly revenue by plan</h3>
                             </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Quick Navigation Cards */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-2">
-                        <div className="ds-card p-6 flex items-center justify-between">
-                          <div className="space-y-1">
-                            <h4 className="font-semibold text-sm text-foreground">Pending Settlements</h4>
-                            <p className="text-xs text-muted-foreground">
-                              {pendingPaymentsList.length} invoice{pendingPaymentsList.length === 1 ? "" : "s"} waiting, totaling <strong className="text-warning font-mono">{formatLKR(totalPendingAmountLKR, { withDecimals: true })}</strong>
-                            </p>
+                            <div className="overflow-x-auto">
+                              <table className="w-full text-left text-xs">
+                                <thead>
+                                  <tr className="bg-muted text-2xs font-bold uppercase tracking-wider text-muted-foreground">
+                                    <th className="px-6 py-3">Plan</th>
+                                    <th className="px-6 py-3">Price</th>
+                                    <th className="px-6 py-3 text-right">Showrooms</th>
+                                    <th className="px-6 py-3 text-right">Revenue</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-border/60">
+                                  {planRows.map(({ choice, count, total }) => (
+                                    <tr key={choice.value}>
+                                      <td className="px-6 py-3 font-semibold text-foreground">{choice.label}</td>
+                                      <td className="px-6 py-3 font-mono text-muted-foreground">{choice.value === "Custom" ? "Per quote" : `${formatLKR(choice.price)}/mo`}</td>
+                                      <td className="px-6 py-3 text-right font-mono text-foreground">{count}</td>
+                                      <td className="px-6 py-3 text-right font-mono font-bold text-foreground">{formatLKR(total)}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                                <tfoot>
+                                  <tr className="border-t border-border bg-muted/50">
+                                    <td className="px-6 py-3 font-bold text-foreground">Total</td>
+                                    <td className="px-6 py-3" />
+                                    <td className="px-6 py-3 text-right font-mono font-bold text-foreground">{planRows.reduce((sum, r) => sum + r.count, 0)}</td>
+                                    <td className="px-6 py-3 text-right font-mono font-bold text-foreground">{formatLKR(planRows.reduce((sum, r) => sum + r.total, 0))}</td>
+                                  </tr>
+                                </tfoot>
+                              </table>
+                            </div>
                           </div>
-                          <button
-                            onClick={() => setPaymentSubTab("pending")}
-                            className="ds-btn ds-btn-primary shrink-0"
-                          >
-                            Resolve Pending →
-                          </button>
+                        );
+                      })()}
+
+                      {/* What to chase and what just came in */}
+                      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                        <div className="ds-card space-y-4 p-6">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-base font-bold text-foreground">Still to collect this month</h3>
+                            <button type="button" onClick={() => setPaymentSubTab("pending")} className="cursor-pointer text-xs font-bold text-foreground/80 hover:text-foreground">
+                              View all →
+                            </button>
+                          </div>
+                          {toCollectRows.length === 0 ? (
+                            <p className="py-4 text-center text-xs text-muted-foreground">Nothing left to collect this month.</p>
+                          ) : (
+                            <ul className="divide-y divide-border/60">
+                              {toCollectRows.slice(0, 5).map((row) => {
+                                const label = row.suspended ? "Suspended" : row.overdue ? "Overdue" : "Due";
+                                const tone = row.suspended || row.overdue ? "border-destructive/30 bg-destructive-muted text-destructive" : "border-warning/30 bg-warning-muted text-warning";
+                                return (
+                                  <li key={row.shop.id} className="flex items-center gap-3 py-3">
+                                    <ShopAvatar name={row.shop.shopName || row.shop.email} logoUrl={row.shop.logoUrl} className="h-9 w-9 rounded-xl" />
+                                    <div className="min-w-0 flex-1">
+                                      <p className="truncate text-xs font-bold text-foreground">{row.shop.shopName || row.shop.email}</p>
+                                      <p className="mt-0.5 flex items-center gap-1.5 text-2xs text-muted-foreground">
+                                        <span className={`rounded-full border px-2 py-0.5 font-bold ${tone}`}>{label}</span>
+                                        {row.dueISO && <span>{fmtDay(`${row.dueISO}T00:00:00Z`)}</span>}
+                                      </p>
+                                    </div>
+                                    <span className="shrink-0 font-mono text-xs font-bold text-foreground">{formatLKR(row.owed)}</span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          )}
                         </div>
 
-                        <div className="ds-card p-6 flex items-center justify-between">
-                          <div className="space-y-1">
-                            <h4 className="font-semibold text-sm text-foreground">Complete Payment History</h4>
-                            <p className="text-xs text-muted-foreground">
-                              Filter and search {paymentHistory.length} transactions across status, date, and LKR amount.
-                            </p>
+                        <div className="ds-card space-y-4 p-6">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-base font-bold text-foreground">Recent payments</h3>
+                            <button type="button" onClick={() => setPaymentSubTab("history")} className="cursor-pointer text-xs font-bold text-foreground/80 hover:text-foreground">
+                              View ledger →
+                            </button>
                           </div>
-                          <button
-                            onClick={() => setPaymentSubTab("history")}
-                            className="px-4 py-2 rounded-full border border-input bg-muted text-xs font-bold text-foreground/80 hover:text-foreground cursor-pointer shrink-0"
-                          >
-                            Explore Ledger →
-                          </button>
+                          {recentReceived.length === 0 ? (
+                            <p className="py-4 text-center text-xs text-muted-foreground">No payments have been received yet.</p>
+                          ) : (
+                            <ul className="divide-y divide-border/60">
+                              {recentReceived.map((p) => (
+                                <li key={p.paymentId} className="flex items-center gap-3 py-3">
+                                  <div className="min-w-0 flex-1">
+                                    <p className="truncate text-xs font-bold text-foreground">{p.shopName}</p>
+                                    <p className="mt-0.5 truncate text-2xs text-muted-foreground">{p.package} · {p.date}</p>
+                                  </div>
+                                  <span className="shrink-0 font-mono text-xs font-bold text-success">{p.amount}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -3140,8 +3151,6 @@ export function AdminWorkspace({
               <ReportsPanel
                 payments={payments}
                 shops={shops}
-                roomTypes={roomTypes}
-                totalDesigns={totalDesigns}
                 today={todayKey}
                 activeShowrooms={activeSubs}
                 totalShowrooms={shops.length}
@@ -3313,7 +3322,7 @@ export function AdminWorkspace({
                           )}
                         </div>
                       </SettingsRow>
-                      <div className="grid gap-6 md:grid-cols-2">
+                      <div className="grid gap-6 sm:grid-cols-2">
                         <SettingsRow label="Name" htmlFor="admin-name">
                           <input
                             id="admin-name"
@@ -3501,7 +3510,7 @@ export function AdminWorkspace({
                       title="Footer & Social Media Channels"
                       description="Manage the external hyperlinks displayed on the showroom sidebar footer and contact cards, including the Echilion brand website, WhatsApp, phone, Facebook, and Instagram."
                     >
-                      <div className="grid gap-6 md:grid-cols-2">
+                      <div className="grid gap-6 sm:grid-cols-2">
                         <SettingsRow label="Website Link (Echilion Logo)" hint="The URL opened when visitors click the Echilion logo.">
                           <input
                             type="url"
