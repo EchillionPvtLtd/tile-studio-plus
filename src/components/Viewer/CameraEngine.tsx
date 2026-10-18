@@ -5,6 +5,7 @@ import { useThree } from '@react-three/fiber';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { OrbitControls } from '@react-three/drei';
 import { useRoomStore } from '@/stores/roomStore';
+import { onCameraZoom } from '@/three/cameraZoom';
 
 const FT2M = 0.3048;
 
@@ -91,6 +92,20 @@ export function CameraEngine() {
 
     controls.update();
   }, [cameraPreset, roomType, lengthFt, widthFt, heightFt, halfL, halfW, camera]);
+
+  // Zoom +/− buttons in the toolbar: move the camera along its line to the target
+  useEffect(
+    () =>
+      onCameraZoom((factor) => {
+        const controls = controlsRef.current;
+        if (!controls) return;
+        const offset = camera.position.clone().sub(controls.target);
+        const distance = Math.min(Math.max(offset.length() * factor, controls.minDistance), controls.maxDistance);
+        camera.position.copy(controls.target).add(offset.setLength(distance));
+        controls.update();
+      }),
+    [camera],
+  );
 
   return (
     <OrbitControls
