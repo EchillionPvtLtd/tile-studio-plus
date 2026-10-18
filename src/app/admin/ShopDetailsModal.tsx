@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/dashboard";
+import { brandImageSrc } from "@/lib/tileImageUrl";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Store,
@@ -399,7 +400,7 @@ export function ShopDetailsModal({
             <div className="w-14 h-14 rounded-xl bg-field border border-input flex items-center justify-center text-foreground font-bold text-sm shrink-0 overflow-hidden shadow-xs">
               {formData.logoUrl || shop.logoUrl ? (
                 <img
-                  src={formData.logoUrl || shop.logoUrl}
+                  src={brandImageSrc(formData.logoUrl) || shop.logoUrl}
                   alt={shop.shopName || "Shop"}
                   className="w-full h-full object-cover"
                 />
@@ -976,7 +977,7 @@ export function ShopDetailsModal({
                   </label>
                   <input
                     type="url"
-                    placeholder="https://... or /Logo/..."
+                    placeholder="Image link or Google Drive link"
                     value={formData.logoUrl}
                     onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
                     className="ds-field"
@@ -988,7 +989,7 @@ export function ShopDetailsModal({
                   </label>
                   <input
                     type="url"
-                    placeholder="https://..."
+                    placeholder="Image link or Google Drive link"
                     value={formData.coverPhotoUrl}
                     onChange={(e) => setFormData({ ...formData, coverPhotoUrl: e.target.value })}
                     className="ds-field"
