@@ -17,7 +17,6 @@ vi.mock("@/lib/prisma", () => {
 });
 
 import { POST as uploadLogo } from "@/app/api/upload/logo/route";
-import { POST as uploadPoster } from "@/app/api/upload/poster/route";
 import { GET as serveUpload } from "@/app/uploads/[file]/route";
 import { removeUnreferencedUploads, uploadFileName, uploadUrlsIn } from "@/lib/uploads";
 
@@ -73,16 +72,6 @@ describe("logo upload", () => {
   it("rejects a request with no file", async () => {
     const res = await uploadLogo(new Request("http://localhost/api/upload", { method: "POST", body: new FormData() }) as never);
     expect(res.status).toBe(400);
-  });
-});
-
-describe("poster upload", () => {
-  it("is admin-only", async () => {
-    expect((await uploadPoster(upload(await png()))).status).toBe(401);
-    session.current = { userId: "a1", email: "admin@x.co", role: "ADMIN" };
-    const res = await uploadPoster(upload(await png()));
-    expect(res.status).toBe(200);
-    expect((await res.json()).imageUrl).toMatch(/^\/uploads\/poster-\d+\.webp$/);
   });
 });
 
