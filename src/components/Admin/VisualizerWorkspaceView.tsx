@@ -82,9 +82,9 @@ export function VisualizerWorkspaceView() {
     setTimeout(() => setDownloadError(null), 6000);
   };
 
-  // Only phones in portrait (< 640px) start with the sidebar collapsed so canvas gets full screen
+  // Only phones in portrait (< 600px) start with the sidebar collapsed so canvas gets full screen
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 640) {
+    if (typeof window !== 'undefined' && window.innerWidth < 600) {
       setIsSidebarCollapsed(true);
     }
   }, []);
@@ -317,14 +317,14 @@ export function VisualizerWorkspaceView() {
         )}
 
         {/* ── Studio sidebar ─────────────────────────────────────── */}
-        {/* Phone (< 640px): bottom sheet · Tablet & Desktop (>= 640px): docked side-by-side relative column */}
+        {/* Phone (< 600px): bottom sheet · Tablet & Desktop (>= 600px): docked side-by-side relative column */}
         <aside
           className={cn(
             'flex shrink-0 flex-col border-border bg-card overflow-visible transition-all duration-300 z-20',
-            // Mobile (< 640px): Bottom sheet
+            // Mobile (< 600px): Bottom sheet
             'absolute inset-x-0 bottom-0 h-[58%] max-h-[58%] rounded-t-2xl border-t shadow-elevated',
-            // Tablet & Desktop (>= 640px): Docked side-by-side relative column that shrinks smoothly
-            'sm:relative sm:inset-auto sm:h-full sm:rounded-none sm:border-t-0 sm:border-r sm:shadow-none sm:w-[280px] md:w-[320px] lg:w-[360px]',
+            // Tablet & Desktop (>= 600px): Docked side-by-side relative column that shrinks smoothly
+            'sm:relative sm:inset-auto sm:h-full sm:max-h-none sm:rounded-none sm:border-t-0 sm:border-r sm:shadow-none sm:w-[280px] md:w-[320px] lg:w-[360px]',
             isSidebarCollapsed
               ? 'translate-y-full sm:translate-y-0 sm:-ml-[280px] md:-ml-[320px] lg:-ml-[360px]'
               : 'translate-y-0 sm:ml-0',
@@ -406,7 +406,7 @@ export function VisualizerWorkspaceView() {
         </main>
       </div>
 
-      {/* ── Phone tab bar (thumb reach, only on mobile < 640px) ───── */}
+      {/* ── Phone tab bar (thumb reach, only on mobile < 600px) ───── */}
       <nav
         className="grid shrink-0 grid-cols-4 border-t border-border bg-card pb-[env(safe-area-inset-bottom)] sm:hidden"
         aria-label="Studio"
