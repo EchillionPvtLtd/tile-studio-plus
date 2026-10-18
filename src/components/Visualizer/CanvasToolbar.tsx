@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Moon, MousePointer, Move, Sun, Sunrise, Sunset, ZoomIn } from 'lucide-react';
+import { Minus, Moon, MousePointer, Move, Plus, Sun, Sunrise, Sunset, ZoomIn } from 'lucide-react';
 import { useRoomStore, type CameraPreset, type TimeOfDay } from '@/stores/roomStore';
 import { cn } from '@/lib/utils';
+import { zoomCamera } from '@/three/cameraZoom';
 
 const TIMES: { id: TimeOfDay; label: string; icon: typeof Sun }[] = [
   { id: 'morning', label: 'Morning', icon: Sunrise },
@@ -60,6 +61,30 @@ export function CanvasToolbar({ className }: { className?: string }) {
   }, []);
 
   return (
+    <>
+    {/* Zoom buttons: the only way to zoom without a pinch or scroll wheel */}
+    <div className="pointer-events-auto absolute right-3 top-3 z-10 flex flex-col overflow-hidden rounded-full border border-border bg-card/95 shadow-elevated backdrop-blur">
+      <button
+        type="button"
+        onClick={() => zoomCamera(0.8)}
+        aria-label="Zoom in"
+        title="Zoom in"
+        className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:bg-accent active:bg-accent"
+      >
+        <Plus className="h-4 w-4" />
+      </button>
+      <span className="mx-2 h-px bg-border" />
+      <button
+        type="button"
+        onClick={() => zoomCamera(1.25)}
+        aria-label="Zoom out"
+        title="Zoom out"
+        className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:bg-accent active:bg-accent"
+      >
+        <Minus className="h-4 w-4" />
+      </button>
+    </div>
+
     <div className={cn("pointer-events-none absolute inset-x-0 bottom-4 z-10 flex flex-col items-center gap-2 px-4", className)}>
       <div
         className={cn(
@@ -108,5 +133,6 @@ export function CanvasToolbar({ className }: { className?: string }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
