@@ -1024,12 +1024,22 @@ export function ShopWorkspace({
         />
 
         {/* ── MAIN WORKSPACE CONTENT AREA ─────────────────────────────────── */}
-        <div className={`flex-1 min-w-0 transition-all duration-200 pl-0 ${isSidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-[248px]"}`}>
+        <div className={`flex-1 min-w-0 transition-all duration-200 pl-0 ${isSidebarCollapsed ? "xl:pl-[72px]" : "xl:pl-[248px]"}`}>
           
           {/* Top Header Bar */}
           <header className="sticky top-0 z-30 bg-background/90 backdrop-blur-md px-4 py-4 sm:px-8 sm:py-5 flex items-center justify-between gap-4 border-b border-border">
             {/* Showroom Title & Breadcrumb */}
             <div className="flex min-w-0 flex-1 items-center gap-3.5">
+              {/* Navigation drawer toggle (< xl), same as the admin dashboard */}
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(true)}
+                className="ds-btn ds-btn-outline w-9 shrink-0 px-0 xl:hidden"
+                title="Open navigation menu"
+                aria-label="Open navigation menu"
+              >
+                <PanelLeftOpen className="h-4 w-4" />
+              </button>
               <div className="min-w-0">
                 <h1 className="truncate text-lg font-semibold text-foreground tracking-tight sm:text-xl">
                   {user.shopName || "Showroom Workspace"}
@@ -1257,7 +1267,7 @@ export function ShopWorkspace({
                       )}
 
                       <form onSubmit={handleInlineAddTileSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                           
                           {/* Left Column: Form Fields */}
                           <div className="space-y-4">
@@ -2703,7 +2713,7 @@ export function ShopWorkspace({
                 )}
 
                 {settingsSubTab === "account" && (
-                  <SettingsCard title="Account" description="Your sign-in details. These cannot be changed here." bodyClassName="grid gap-6 md:grid-cols-2">
+                  <SettingsCard title="Account" description="Your sign-in details. These cannot be changed here." bodyClassName="grid gap-6 sm:grid-cols-2">
                     <SettingsRow label="Login email" htmlFor="acct-email">
                       <CopyField id="acct-email" value={user.email} mono={false} />
                     </SettingsRow>
