@@ -54,6 +54,12 @@ export function isSafeImageUrl(url: string) {
   return /^\/uploads\/[\w.-]+$/.test(url) || /^https:\/\/\S+$/i.test(url);
 }
 
+/** The Google Drive sharing link behind a stored poster picture address, so editing shows what was pasted. */
+export function driveLinkFromImageUrl(url: string): string | null {
+  const id = /^https:\/\/lh3\.googleusercontent\.com\/d\/([\w-]+)/.exec(url)?.[1];
+  return id ? `https://drive.google.com/file/d/${id}/view` : null;
+}
+
 /** A button link must be a site-relative path or an http(s) URL — never javascript: or data:. */
 export function isSafeLinkUrl(url: string) {
   return /^\/(?!\/)\S*$/.test(url) || /^https?:\/\/\S+$/i.test(url);
