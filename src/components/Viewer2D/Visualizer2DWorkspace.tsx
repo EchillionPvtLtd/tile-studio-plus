@@ -409,6 +409,18 @@ export function Visualizer2DWorkspace({
   const roomLabel = shownRoom ? roomKindLabel(shownRoom.roomType) : null;
   const tiledCount = Object.keys(design.surfaces).length;
 
+  const handleBackToShowroom = () => {
+    if (onBackToShowroom) {
+      onBackToShowroom();
+      return;
+    }
+    if (shopId) {
+      window.location.href = `/shop?shopId=${encodeURIComponent(shopId)}`;
+    } else {
+      window.location.href = '/shop';
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -431,18 +443,24 @@ export function Visualizer2DWorkspace({
         {/* Left: Tile Studio Logo, Showroom Logo & Name */}
         <div className="flex min-w-0 flex-1 items-center gap-1.5 sm:gap-2">
           {/* Tile Studio Logo */}
-          <div className="flex items-center shrink-0">
+          <button
+            type="button"
+            onClick={handleBackToShowroom}
+            className="flex items-center shrink-0 cursor-pointer rounded-lg p-1 -m-1 transition-opacity hover:opacity-80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title="Go back to Showroom"
+            aria-label="Go back to Showroom"
+          >
             <img
               src="/Logo/TS+.BK.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain dark:hidden select-none"
+              className="h-7 w-auto object-contain dark:hidden select-none pointer-events-none"
             />
             <img
               src="/Logo/TS+.BG.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain hidden dark:block select-none"
+              className="h-7 w-auto object-contain hidden dark:block select-none pointer-events-none"
             />
-          </div>
+          </button>
 
           {shop && (
             <>

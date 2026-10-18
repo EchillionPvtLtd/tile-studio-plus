@@ -201,7 +201,7 @@ export const useRoomStore = create<RoomStore>()(
       const cfg = ROOM_CONFIGS.find((r) => r.type === type) ?? defaultRoom;
       
       if (matchingTemplate) {
-        get().applyTemplate(matchingTemplate.id, true);
+        get().applyTemplate(matchingTemplate.id, false);
       } else {
         set({
           roomType: type,

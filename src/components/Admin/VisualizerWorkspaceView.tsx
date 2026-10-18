@@ -195,6 +195,14 @@ export function VisualizerWorkspaceView() {
     router.push(query ? `/visualizer-2d?${query}` : '/visualizer-2d');
   };
 
+  const goToShowroom = () => {
+    if (shopId) {
+      window.location.href = `/shop?shopId=${encodeURIComponent(shopId)}`;
+    } else {
+      window.location.href = '/shop';
+    }
+  };
+
   const roomLabel = ROOM_CONFIGS.find((r) => r.type === store.roomType)?.label ?? 'Room';
   const expanded = isCanvasExpanded || isFullscreen;
   const editing =
@@ -210,18 +218,24 @@ export function VisualizerWorkspaceView() {
       <header className="z-30 flex h-14 shrink-0 items-center gap-3 border-b border-border bg-card px-3 sm:px-4">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {/* Tile Studio Logo */}
-          <div className="flex items-center shrink-0">
+          <button
+            type="button"
+            onClick={goToShowroom}
+            className="flex items-center shrink-0 cursor-pointer rounded-lg p-1 -m-1 transition-opacity hover:opacity-80 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            title="Go back to Showroom"
+            aria-label="Go back to Showroom"
+          >
             <img
               src="/Logo/TS+.BK.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain dark:hidden select-none"
+              className="h-7 w-auto object-contain dark:hidden select-none pointer-events-none"
             />
             <img
               src="/Logo/TS+.BG.png"
               alt="Tile Studio Plus+"
-              className="h-7 w-auto object-contain hidden dark:block select-none"
+              className="h-7 w-auto object-contain hidden dark:block select-none pointer-events-none"
             />
-          </div>
+          </button>
 
           {shop && (
             <>

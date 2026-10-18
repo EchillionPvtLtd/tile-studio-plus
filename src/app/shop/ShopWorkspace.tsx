@@ -34,7 +34,6 @@ import { addTile, deleteTile, setVisualizerDownloads, updateShopProfileSettings 
 import { readDownloads, type VisualizerDownloads } from "@/lib/visualizerDownloads";
 import { useNotificationFeed } from "@/components/notifications/useNotificationFeed";
 import { NotificationBell, NotificationToasts, PaymentReminderCard } from "@/components/notifications/NotificationParts";
-import { SuspendedOverlay } from "@/components/notifications/SuspendedOverlay";
 import type { NotificationFeed } from "@/lib/notificationTypes";
 import type { SubscriptionPlanItem } from "@/lib/subscriptionPlanTypes";
 import { DEFAULT_SUBSCRIPTION_PLANS } from "@/lib/subscriptionPlanTypes";
@@ -313,13 +312,7 @@ export function ShopWorkspace({
 
   const addTileImage = useTileImageCheck(addTileState.textureUrl);
 
-  const sampleTextures = [
-    { name: "Carrara White", url: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80", finish: "Polished", cat: "floor" },
-    { name: "Nero Marquina", url: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&auto=format&fit=crop&q=80", finish: "Gloss", cat: "floor" },
-    { name: "Nordic Oak", url: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80", finish: "Matt", cat: "floor" },
-    { name: "Travertine Beige", url: "https://images.unsplash.com/photo-1598928506311-c55ded91a20c?w=600&auto=format&fit=crop&q=80", finish: "Satin", cat: "wall" },
-    { name: "Urban Concrete", url: "https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?w=600&auto=format&fit=crop&q=80", finish: "Matt", cat: "both" },
-  ];
+
 
   const handleInlineAddTileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1077,8 +1070,7 @@ export function ShopWorkspace({
             </div>
           </header>
 
-          {/* The admin suspended this showroom while the owner is working: lock everything, leave only Log out */}
-          {feed.suspended && <SuspendedOverlay shopName={user.shopName || ""} supportPhone={feed.supportPhone} logoutAction={logoutAction} />}
+
 
           <NotificationToasts
             toasts={feed.toasts}
@@ -1395,32 +1387,6 @@ export function ShopWorkspace({
                                 check={addTileImage}
                                 className="ds-field"
                               />
-                            </div>
-
-                            {/* Quick Presets */}
-                            <div>
-                              <span className="text-2xs font-bold text-muted-foreground block mb-1.5">
-                                Quick Texture Presets (Click to fill)
-                              </span>
-                              <div className="flex flex-wrap gap-1.5">
-                                {sampleTextures.map((s, idx) => (
-                                  <button
-                                    key={idx}
-                                    type="button"
-                                    onClick={() => setAddTileState({
-                                      ...addTileState,
-                                      name: s.name,
-                                      sku: `TL-${s.name.toUpperCase().replace(/\s+/g, "-")}-01`,
-                                      textureUrl: s.url,
-                                      finish: s.finish,
-                                      category: s.cat,
-                                    })}
-                                    className="px-2.5 py-1 rounded-lg text-2xs font-bold bg-muted border border-input hover:bg-primary/90 hover:text-primary-foreground transition-colors"
-                                  >
-                                    {s.name}
-                                  </button>
-                                ))}
-                              </div>
                             </div>
                           </div>
 
@@ -2286,7 +2252,8 @@ export function ShopWorkspace({
                   const currentPlanPrice = currentMatchedPlan?.price ?? 0;
 
                   return (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="overflow-x-auto pb-4">
+                      <div className="grid grid-cols-3 gap-3 sm:gap-6 min-w-[700px] lg:min-w-0">
                       {activePlans.map((tier) => {
                         const isCurrent = !!currentMatchedPlan && tier.id === currentMatchedPlan.id;
 
@@ -2302,7 +2269,7 @@ export function ShopWorkspace({
                           <div
                             key={tier.id}
                             className={cn(
-                              "relative rounded-[1.5rem] p-6 sm:p-7 bg-black text-white border transition-all duration-300 flex flex-col justify-between group shadow-xl",
+                              "relative rounded-[1.5rem] p-4 sm:p-6 lg:p-7 bg-black text-white border transition-all duration-300 flex flex-col justify-between group shadow-xl",
                               isCurrent
                                 ? "border-2 border-emerald-500 ring-4 ring-emerald-500/20 shadow-lg shadow-emerald-500/15"
                                 : tier.isPopular
@@ -2313,15 +2280,15 @@ export function ShopWorkspace({
                             {/* Top Section: Plan Name, Badges, Price & Quota */}
                             <div>
                               <div className="flex items-center justify-between mb-3">
-                                <h3 className="font-bold text-lg text-white tracking-wide">
+                                <h3 className="font-bold text-base sm:text-lg text-white tracking-wide truncate">
                                   {tier.name.trim().toLowerCase().endsWith("plan") ? tier.name : `${tier.name} Plan`}
                                 </h3>
                                 {isCurrent ? (
-                                  <span className="bg-emerald-500 text-black font-extrabold px-3 py-1 rounded-full text-2xs flex items-center gap-1 shadow-sm tracking-wider uppercase">
+                                  <span className="bg-emerald-500 text-black font-extrabold px-2.5 py-0.5 rounded-full text-2xs flex items-center gap-1 shadow-sm tracking-wider uppercase shrink-0">
                                     <Check className="w-3 h-3 stroke-[3]" /> Activated
                                   </span>
                                 ) : tier.isPopular ? (
-                                  <span className="bg-zinc-800 border border-zinc-700 text-zinc-200 px-3 py-1 rounded-full text-2xs font-bold tracking-wider uppercase">
+                                  <span className="bg-zinc-800 border border-zinc-700 text-zinc-200 px-2.5 py-0.5 rounded-full text-2xs font-bold tracking-wider uppercase shrink-0">
                                     Popular
                                   </span>
                                 ) : null}
@@ -2329,7 +2296,7 @@ export function ShopWorkspace({
 
                               {/* Price Display from Uiverse card */}
                               <div className="flex items-baseline gap-1 mt-1">
-                                <span className="text-3xl sm:text-4xl lg:text-[2.6rem] font-light tracking-tight text-white font-mono leading-none">
+                                <span className="text-xl sm:text-3xl lg:text-[2.5rem] font-light tracking-tight text-white font-mono leading-none">
                                   {displayPrice}
                                 </span>
                                 <span className="text-xs text-zinc-400 font-normal ml-1">
@@ -2406,6 +2373,7 @@ export function ShopWorkspace({
                           </div>
                         );
                       })}
+                      </div>
                     </div>
                   );
                 })()}

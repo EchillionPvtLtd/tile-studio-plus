@@ -5,9 +5,12 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
+  ChevronLeft,
   ChevronRight,
   Grid3X3,
   Layers,
+  Maximize2,
+  Minimize2,
   RotateCcw,
   Search,
   SlidersHorizontal,
@@ -183,6 +186,28 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
   const [finish, setFinish] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [showFilters, setShowFilters] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -scrollContainerRef.current.clientWidth * 0.85, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: scrollContainerRef.current.clientWidth * 0.85, behavior: 'smooth' });
+    }
+  };
+
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (!isExpanded && scrollContainerRef.current) {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && e.deltaY !== 0) {
+        scrollContainerRef.current.scrollLeft += e.deltaY;
+      }
+    }
+  };
 
   useEffect(() => {
     if (use && use !== 'all') {
@@ -879,26 +904,86 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
         </div>
       )}
 
-      {/* 4. Active Filter Summary */}
+      {/* 4. Active Filter Summary & Expand/Scroll Controls */}
       <div className="flex items-center justify-between text-2xs text-muted-foreground px-0.5">
-        <span>
-          Showing <strong className="text-foreground">{visible.length}</strong> of{' '}
-          <strong className="text-foreground">{pool.length}</strong> tiles
-        </span>
-        {activeFilterCount > 0 && (
-          <span className="font-medium text-foreground">
-            {activeFilterCount} filter{activeFilterCount === 1 ? '' : 's'} active
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="truncate">
+            Showing <strong className="text-foreground">{visible.length}</strong> of{' '}
+            <strong className="text-foreground">{pool.length}</strong> tiles
           </span>
-        )}
+          {!isExpanded && visible.length > 6 && (
+            <span className="text-[10px] text-muted-foreground/70 hidden sm:inline">(Scroll →)</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Horizontal Scroll Arrows (compact mode with > 6 tiles) */}
+          {!isExpanded && visible.length > 6 && (
+            <div className="flex items-center gap-0.5 bg-muted/70 rounded-lg p-0.5 border border-border/60 shadow-2xs">
+              <button
+                type="button"
+                onClick={scrollLeft}
+                className="h-6 w-6 rounded flex items-center justify-center hover:bg-card text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title="Scroll tiles left"
+                aria-label="Scroll tiles left"
+              >
+                <ChevronLeft className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={scrollRight}
+                className="h-6 w-6 rounded flex items-center justify-center hover:bg-card text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                title="Scroll tiles right"
+                aria-label="Scroll tiles right"
+              >
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Expand / Compact Toggle Option */}
+          <button
+            type="button"
+            onClick={() => setIsExpanded((prev) => !prev)}
+            className={cn(
+              'flex items-center gap-1 px-2.5 py-1 rounded-lg text-2xs font-bold transition-all cursor-pointer border shadow-2xs',
+              isExpanded
+                ? 'bg-primary text-primary-foreground border-primary hover:opacity-90'
+                : 'bg-card text-foreground border-border hover:border-foreground/30 hover:bg-accent'
+            )}
+            title={isExpanded ? 'Show compact (3 rows)' : 'Expand to see all tiles in side panel'}
+            aria-pressed={isExpanded}
+          >
+            {isExpanded ? (
+              <>
+                <Minimize2 className="h-3 w-3 stroke-[2.5]" />
+                <span>Compact (3 rows)</span>
+              </>
+            ) : (
+              <>
+                <Maximize2 className="h-3 w-3 stroke-[2.5]" />
+                <span>Expand All</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* 5. Tiles Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-2.5">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-[150px] animate-pulse rounded-2xl bg-muted" />
-          ))}
-        </div>
+        !isExpanded ? (
+          <div className="grid grid-rows-3 grid-flow-col auto-cols-[calc((100%-10px)/2)] gap-2.5 overflow-hidden">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-[125px] animate-pulse rounded-2xl bg-muted" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2.5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-[145px] animate-pulse rounded-2xl bg-muted" />
+            ))}
+          </div>
+        )
       ) : visible.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border px-4 py-8 text-center space-y-2">
           <Grid3X3 className="mx-auto h-6 w-6 text-muted-foreground/60" />
@@ -915,7 +1000,15 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-2.5">
+        <div
+          ref={scrollContainerRef}
+          onWheel={handleWheel}
+          className={cn(
+            !isExpanded
+              ? 'grid grid-rows-3 grid-flow-col auto-cols-[calc((100%-10px)/2)] gap-2.5 overflow-x-auto pb-2.5 pt-0.5 scrollbar-thin scroll-smooth'
+              : 'grid grid-cols-2 gap-2.5 max-h-[72vh] overflow-y-auto pr-1 pb-4 scrollbar-thin'
+          )}
+        >
           {visible.map((t) => {
             const selected = selectedSku === t.sku;
             return (
@@ -926,13 +1019,14 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                 title={`${t.name} · ${t.sku} · ${t.finish}`}
                 aria-pressed={selected}
                 className={cn(
-                  'group overflow-hidden rounded-2xl border bg-card text-left transition-all cursor-pointer',
+                  'group overflow-hidden rounded-2xl border bg-card text-left transition-all cursor-pointer flex flex-col',
+                  !isExpanded && 'snap-start',
                   selected
                     ? 'border-primary ring-2 ring-primary shadow-sm'
                     : 'border-border hover:border-foreground/30 hover:shadow-xs',
                 )}
               >
-                <div className="relative h-24 overflow-hidden bg-muted">
+                <div className={cn('relative overflow-hidden bg-muted shrink-0', !isExpanded ? 'h-20 sm:h-22' : 'h-24')}>
                   <img
                     src={t.previewUrl || t.textureUrl}
                     alt={t.name}
@@ -945,12 +1039,12 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                     </span>
                   )}
                   {t.finish && (
-                    <span className="absolute right-1.5 bottom-1.5 rounded-md bg-black/60 backdrop-blur-xs px-1.5 py-0.5 text-[10px] font-medium text-white capitalize">
+                    <span className="absolute right-1.5 bottom-1.5 rounded-md bg-black/60 backdrop-blur-xs px-1.5 py-0.5 text-[9px] font-medium text-white capitalize">
                       {t.finish}
                     </span>
                   )}
                 </div>
-                <div className="space-y-0.5 p-2.5">
+                <div className="space-y-0.5 p-2 sm:p-2.5 flex-1 min-w-0 flex flex-col justify-between">
                   <p className="truncate text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
                     {t.name}
                   </p>
@@ -958,7 +1052,7 @@ export function TileCatalog({ tiles, isLoading, use = 'all', selectedSku, onSele
                     <span className="truncate">
                       {t.widthMm}×{t.heightMm}
                     </span>
-                    <span className="shrink-0 font-bold text-foreground">
+                    <span className="shrink-0 font-bold text-foreground font-mono">
                       {t.pricePerSqFt ? formatLKR(t.pricePerSqFt) : '—'}
                     </span>
                   </p>

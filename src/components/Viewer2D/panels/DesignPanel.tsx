@@ -182,12 +182,37 @@ export function DesignPanel({ groups, tiles, isLoadingTiles, leftOut = [] }: { g
                         aria-pressed={on}
                         title={l.description}
                         className={cn(
-                          'flex flex-col items-center gap-1.5 rounded-xl border px-1 py-2.5 text-2xs font-medium transition-colors',
-                          on ? 'border-primary bg-primary text-primary-foreground' : 'border-border bg-card text-foreground hover:bg-accent',
+                          'flex flex-col items-center justify-between rounded-xl border p-1.5 h-[68px] transition-all cursor-pointer select-none text-center shadow-2xs group',
+                          on
+                            ? 'border-foreground bg-foreground text-background font-bold shadow-xs ring-1 ring-foreground/20'
+                            : 'border-border bg-card text-foreground hover:border-foreground/40 hover:bg-muted/60',
                         )}
                       >
-                        <PatternIcon layout={l.key} />
-                        <span className="truncate">{l.label}</span>
+                        <div
+                          className={cn(
+                            'flex h-6 w-6 items-center justify-center rounded-md transition-colors',
+                            on ? 'text-background' : 'text-foreground/80 group-hover:text-foreground'
+                          )}
+                        >
+                          <PatternIcon layout={l.key} className="h-4.5 w-4.5" />
+                        </div>
+                        <div className="w-full text-center text-[9.5px] font-semibold leading-[1.15] tracking-tight">
+                          {l.key === 'offset' ? (
+                            <>
+                              <span>1/3</span>
+                              <br />
+                              <span>Offset</span>
+                            </>
+                          ) : l.key === 'herringbone' ? (
+                            <>
+                              <span>Herring</span>
+                              <br />
+                              <span>bone</span>
+                            </>
+                          ) : (
+                            l.label
+                          )}
+                        </div>
                       </button>
                     );
                   })}

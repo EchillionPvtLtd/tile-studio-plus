@@ -21,10 +21,6 @@ export function useCatalogTiles(shopId: string) {
         const data: Tile[] = await res.json();
         if (!alive) return;
         setDbTiles(data);
-        // Give an untouched room a real floor straight away.
-        if (!useRoomStore.getState().floorTile && data.length > 0) {
-          useRoomStore.getState().setTileForSurface('floor', data[0]);
-        }
       } catch (err) {
         console.error('Failed to fetch showroom tiles:', err);
       } finally {
