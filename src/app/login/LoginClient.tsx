@@ -15,7 +15,6 @@ import {
   Loader2,
   Lock,
   Mail,
-  TimerReset,
 } from "lucide-react";
 
 const initialState: LoginFormState = {};
@@ -37,12 +36,6 @@ function writeRememberedEmail(email: string | null) {
   } catch {
     /* storage unavailable (private window, blocked site data) — nothing to remember */
   }
-}
-
-function formatWait(sec: number) {
-  const m = Math.floor(sec / 60);
-  const s = sec % 60;
-  return `${m}:${String(s).padStart(2, "0")}`;
 }
 
 const SLIDE_MS = 6000;
@@ -69,7 +62,7 @@ function PosterSlider({ posters }: { posters: LoginPosterData[] }) {
     <section
       aria-roledescription="carousel"
       aria-label="Product highlights"
-      className="group relative h-[300px] overflow-hidden rounded-3xl bg-neutral-950 text-white sm:h-[380px] lg:h-full lg:min-h-[640px]"
+      className="group relative h-[300px] overflow-hidden rounded-3xl bg-neutral-950 text-white sm:h-[380px] md:h-full md:min-h-[560px] lg:min-h-[640px]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -86,6 +79,7 @@ function PosterSlider({ posters }: { posters: LoginPosterData[] }) {
           src={p.imageUrl}
           alt=""
           aria-hidden={i !== current}
+          onError={(e) => (e.currentTarget.style.display = "none")}
           className={`login-poster absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
             i === current ? "opacity-100" : "opacity-0"
           }`}
@@ -97,7 +91,7 @@ function PosterSlider({ posters }: { posters: LoginPosterData[] }) {
 
       {/* Top row: brand + slide counter */}
       <div className="absolute inset-x-5 top-5 flex items-center justify-between sm:inset-x-7 sm:top-7">
-        <img src="/Logo/TS+.BG.png" alt="Tile Studio Plus+" className="hidden h-10 w-auto object-contain lg:block" />
+        <img src="/Logo/TS+.BG.png" alt="Tile Studio Plus+" className="hidden h-10 w-auto object-contain md:block" />
         {count > 1 && (
           <span className="ml-auto font-mono text-xs font-medium tabular-nums tracking-widest text-white/80 [text-shadow:0_1px_6px_rgb(0_0_0/0.6)]" aria-hidden>
             {String(current + 1).padStart(2, "0")}
@@ -108,18 +102,18 @@ function PosterSlider({ posters }: { posters: LoginPosterData[] }) {
       </div>
 
       {/* Poster copy */}
-      <div className="absolute inset-x-5 bottom-14 sm:inset-x-7 sm:bottom-16 lg:bottom-24">
+      <div className="absolute inset-x-5 bottom-14 sm:inset-x-7 sm:bottom-16 md:bottom-24">
         <div key={current} className="login-poster-copy max-w-md space-y-2 sm:space-y-3" aria-live="polite">
           {posters[current].tag && (
             <span className="inline-block rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider backdrop-blur-md">
               {posters[current].tag}
             </span>
           )}
-          <h2 className="text-xl font-semibold leading-[1.15] tracking-tight sm:text-2xl lg:text-3xl xl:text-4xl">
+          <h2 className="text-xl font-semibold leading-[1.15] tracking-tight sm:text-2xl md:text-2xl lg:text-3xl xl:text-4xl">
             {posters[current].title}
           </h2>
           {posters[current].body && (
-            <p className="line-clamp-2 text-sm leading-relaxed text-white/75 lg:line-clamp-none">{posters[current].body}</p>
+            <p className="line-clamp-2 text-sm leading-relaxed text-white/75 md:line-clamp-none">{posters[current].body}</p>
           )}
           {posters[current].buttonLabel &&
             (posters[current].buttonUrl ? (
@@ -200,7 +194,8 @@ export function LoginClient({ posters }: { posters: LoginPosterData[] }) {
   const [showPw, setShowPw] = useState(false);
   const [email, setEmail] = useState("");
   const [remember, setRemember] = useState(false);
-  const [lockLeft, setLockLeft] = useState(0);
+  // A failed sign-in message stays until the person edits a field or submits again
+  const [errorDismissed, setErrorDismissed] = useState(false);
   const passwordRef = useRef<HTMLInputElement>(null);
 
   // Prefill the last email used on this device; if there is one, jump straight to the password.
@@ -213,31 +208,23 @@ export function LoginClient({ posters }: { posters: LoginPosterData[] }) {
     }
   }, []);
 
-  // Start a countdown whenever the server reports a lockout.
   useEffect(() => {
-    if (!state?.retryAfterSec) return;
-    const until = Date.now() + state.retryAfterSec * 1000;
-    const tick = () => setLockLeft(Math.max(0, Math.ceil((until - Date.now()) / 1000)));
-    tick();
-    const t = setInterval(tick, 1000);
-    return () => clearInterval(t);
+    setErrorDismissed(false);
   }, [state]);
 
-  const locked = lockLeft > 0;
-
   return (
-    <main className="min-h-screen bg-background p-3 text-foreground lg:p-4">
-      <div className="login-enter mx-auto grid max-w-[1400px] grid-cols-1 gap-4 lg:min-h-[calc(100dvh-2rem)] lg:grid-cols-[1.15fr_1fr]">
+    <main className="min-h-screen bg-background p-3 text-foreground md:p-4">
+      <div className="login-enter mx-auto grid max-w-[1400px] grid-cols-1 gap-4 md:min-h-[calc(100dvh-2rem)] md:grid-cols-[1fr_1fr] lg:grid-cols-[1.15fr_1fr]">
         {/* Left — advertisement posters (banner above the form on phones and tablets) */}
         <div>
           <PosterSlider posters={posters} />
         </div>
 
         {/* Right — sign in */}
-        <div className="relative flex flex-col items-center justify-center px-4 py-12 sm:px-10">
+        <div className="relative flex flex-col items-center justify-center px-4 py-12 sm:px-10 md:px-8 lg:px-10">
           <div className="w-full max-w-[400px]">
             {/* Mobile brand (the logo art is light-on-dark, so give it a dark chip) */}
-            <div className="login-item mb-8 lg:hidden" style={{ animationDelay: "40ms" }}>
+            <div className="login-item mb-8 md:hidden" style={{ animationDelay: "40ms" }}>
               <img
                 src="/Logo/TS+.BG.png"
                 alt="Tile Studio Plus+"
@@ -271,7 +258,10 @@ export function LoginClient({ posters }: { posters: LoginPosterData[] }) {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setErrorDismissed(true);
+                    }}
                     placeholder="name@showroom.com"
                     aria-invalid={!!state?.errors?.email}
                     className="ds-field login-auth-input h-12 pl-10 pr-3.5"
@@ -297,6 +287,7 @@ export function LoginClient({ posters }: { posters: LoginPosterData[] }) {
                     autoComplete="current-password"
                     required
                     placeholder="Enter your password"
+                    onChange={() => setErrorDismissed(true)}
                     aria-invalid={!!state?.errors?.password}
                     className="ds-field login-auth-input h-12 pl-10 pr-11"
                   />
@@ -341,26 +332,21 @@ export function LoginClient({ posters }: { posters: LoginPosterData[] }) {
                 <span className="select-none text-sm text-muted-foreground">Remember my email on this device</span>
               </label>
 
-              {state?.message && (
+              {state?.message && !errorDismissed && (
                 <Alert variant="destructive" className="py-3">
                   <AlertDescription className="text-sm leading-snug">
-                    {locked ? `Too many failed attempts. Sign-in is locked for ${formatWait(lockLeft)}.` : state.message}
+                    {state.message}
                   </AlertDescription>
                 </Alert>
               )}
 
               <button
                 type="submit"
-                disabled={isPending || locked}
+                disabled={isPending}
                 className="ds-btn ds-btn-primary login-item h-12 w-full text-sm"
                 style={{ animationDelay: "240ms" }}
               >
-                {locked ? (
-                  <>
-                    <TimerReset className="h-4 w-4" />
-                    Try again in {formatWait(lockLeft)}
-                  </>
-                ) : isPending ? (
+                {isPending ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
                     Signing in…
