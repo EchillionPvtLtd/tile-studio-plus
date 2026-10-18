@@ -12,8 +12,6 @@ import { cn, formatLKR } from "@/lib/utils";
 interface ReportsPanelProps {
   payments: ReportPayment[];
   shops: { id: string; shopName?: string | null; logoUrl?: string | null }[];
-  roomTypes: { roomType: string; count: number }[];
-  totalDesigns: number;
   /** Today as YYYY-MM-DD. */
   today: string;
   activeShowrooms: number;
@@ -75,7 +73,7 @@ function BarRow({ label, value, share, hint, lead }: { label: string; value: str
   );
 }
 
-export function ReportsPanel({ payments, shops, roomTypes, totalDesigns, today, activeShowrooms, totalShowrooms, monthlyRecurring, onExportShops, onNotify }: ReportsPanelProps) {
+export function ReportsPanel({ payments, shops, today, activeShowrooms, totalShowrooms, monthlyRecurring, onExportShops, onNotify }: ReportsPanelProps) {
   const [range, setRange] = useState<ReportRange>("6m");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
   const [shown, setShown] = useState(PAGE);
@@ -172,7 +170,7 @@ export function ReportsPanel({ payments, shops, roomTypes, totalDesigns, today, 
       </div>
 
       {/* Key figures for the period */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Banknote} label="Collected" value={lkr(report.collected)} tag={range === "month" ? "This month" : range === "6m" ? "6 months" : "12 months"} hint={`${counts.Received} invoice${counts.Received === 1 ? "" : "s"} received`} />
         <StatCard icon={Clock} label="Still to collect" value={lkr(report.owed)} hint={report.owed > 0 ? "Pending or failed invoices" : "Nothing outstanding"} />
         <StatCard icon={Percent} label="Collection rate" value={report.rate === null ? "—" : `${report.rate}%`} hint={report.rate === null ? "No invoices in this period" : `of ${lkr(report.billed)} billed`} />
@@ -370,24 +368,6 @@ export function ReportsPanel({ payments, shops, roomTypes, totalDesigns, today, 
               )}
             </div>
           </>
-        )}
-      </div>
-
-      {/* Visualizer usage */}
-      <div className="ds-card space-y-4 p-6 sm:p-7">
-        <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-foreground">Customer room designs</h3>
-          <span className="font-mono text-xs font-bold text-muted-foreground">{totalDesigns} saved</span>
-        </div>
-        {roomTypes.length === 0 ? (
-          <p className="py-4 text-center text-xs text-muted-foreground">No customer room designs have been saved yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
-            {roomTypes.map((item) => {
-              const pct = Math.round((item.count / Math.max(1, totalDesigns)) * 100);
-              return <BarRow key={item.roomType} label={item.roomType} value={`${item.count} (${pct}%)`} share={pct} />;
-            })}
-          </div>
         )}
       </div>
     </div>
