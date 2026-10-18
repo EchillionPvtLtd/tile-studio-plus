@@ -51,7 +51,6 @@ export default async function AdminPage() {
     },
   });
 
-  const totalDesigns = await prisma.savedDesign.count();
   const totalTiles = shops.reduce((acc, s) => acc + s._count.tiles, 0);
   const activeSubs = shops.filter((s) => s.subscriptionActive).length;
   const tileValueAggregate = await prisma.tile.aggregate({
@@ -59,10 +58,6 @@ export default async function AdminPage() {
   });
   const tileCategories = await prisma.tile.groupBy({
     by: ["category"],
-    _count: { _all: true },
-  });
-  const roomTypes = await prisma.savedDesign.groupBy({
-    by: ["roomType"],
     _count: { _all: true },
   });
   const builtInTilesCount = await prisma.tile.count({
@@ -143,16 +138,11 @@ export default async function AdminPage() {
   return (
     <AdminWorkspace
       shops={shops}
-      totalDesigns={totalDesigns}
       totalTiles={totalTiles}
       activeSubs={activeSubs}
       estimatedTileValue={tileValueAggregate._sum.pricePerSqFt || 0}
       tileCategories={tileCategories.map((item) => ({
         category: item.category,
-        count: item._count._all,
-      }))}
-      roomTypes={roomTypes.map((item) => ({
-        roomType: item.roomType,
         count: item._count._all,
       }))}
       builtInTilesCount={builtInTilesCount}
