@@ -623,7 +623,7 @@ export function ShopDetailsModal({
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-muted border border-border space-y-3">
                     <h4 className="text-xs font-bold text-foreground flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-muted-foreground" />
@@ -821,7 +821,7 @@ export function ShopDetailsModal({
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Subscription Terms */}
                   <div className="p-4 rounded-2xl bg-muted border border-border space-y-3">
                     <h4 className="text-xs font-bold text-foreground flex items-center gap-2">
