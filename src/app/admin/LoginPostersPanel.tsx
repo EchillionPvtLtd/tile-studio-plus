@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import {
   ArrowDown,
   ArrowRight,
@@ -20,11 +20,12 @@ import {
   updatePoster,
   type PosterInput,
 } from "@/actions/posters";
-import type { LoginPosterData } from "@/lib/loginPosters";
+import { TileImageUrlField, useTileImageCheck, type TileImageCheck } from "@/components/TileImageUrl";
+import { driveLinkFromImageUrl, type LoginPosterData } from "@/lib/loginPosters";
+import { resolveTileImageUrl } from "@/lib/tileImageUrl";
 import { cn } from "@/lib/utils";
 
 type FormState = {
-  imageUrl: string;
   tag: string;
   title: string;
   body: string;
@@ -34,7 +35,6 @@ type FormState = {
 };
 
 const EMPTY_FORM: FormState = {
-  imageUrl: "",
   tag: "",
   title: "",
   body: "",
@@ -44,7 +44,6 @@ const EMPTY_FORM: FormState = {
 };
 
 const toForm = (p: LoginPosterData): FormState => ({
-  imageUrl: p.imageUrl,
   tag: p.tag,
   title: p.title,
   body: p.body,
@@ -54,11 +53,11 @@ const toForm = (p: LoginPosterData): FormState => ({
 });
 
 /** Mirrors how a poster is drawn on the login page. */
-function PosterPreview({ form }: { form: FormState }) {
+function PosterPreview({ form, imageSrc }: { form: FormState; imageSrc: string }) {
   return (
     <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-neutral-950 text-white">
-      {form.imageUrl ? (
-        <img src={form.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      {imageSrc ? (
+        <img src={imageSrc} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
         <div className="absolute inset-0 grid place-content-center text-xs text-white/40">No image yet</div>
       )}
@@ -119,10 +118,26 @@ export function LoginPostersPanel({
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
   const [formError, setFormError] = useState("");
-  const [uploading, setUploading] = useState(false);
-  const [linkText, setLinkText] = useState("");
+  // The picture comes from a link, checked with the same rules and image proxy as the tile forms.
+  // A Google Drive link wins when both boxes are filled.
+  const [driveLink, setDriveLink] = useState("");
+  const [webLink, setWebLink] = useState("");
+  // A poster uploaded before uploads were removed keeps its picture until a link replaces it
+  const [legacyImage, setLegacyImage] = useState("");
   const [pending, startTransition] = useTransition();
-  const fileRef = useRef<HTMLInputElement>(null);
+
+  const editing = editingId !== null;
+  const driveResolved = driveLink.trim() ? resolveTileImageUrl(driveLink) : null;
+  const driveWrongKind = !!driveResolved?.ok && driveResolved.kind !== "google-drive";
+  const driveChecked = useTileImageCheck(driveWrongKind ? "" : driveLink, editing);
+  const driveCheck: TileImageCheck = driveWrongKind
+    ? { status: "error", error: "That is not a Google Drive link. Paste it in the web image link box instead." }
+    : driveChecked;
+  const webCheck = useTileImageCheck(webLink, editing && !driveLink.trim());
+  const chosen = driveLink.trim() ? driveCheck : webCheck;
+  const usingLegacy = !driveLink.trim() && !webLink.trim() && !!legacyImage;
+  const imageUrl = chosen.status === "ok" ? chosen.url : usingLegacy ? legacyImage : "";
+  const imageSrc = chosen.status === "ok" ? chosen.previewSrc : usingLegacy ? legacyImage : "";
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -130,7 +145,9 @@ export function LoginPostersPanel({
   const openNew = () => {
     setEditingId("new");
     setForm(EMPTY_FORM);
-    setLinkText("");
+    setDriveLink("");
+    setWebLink("");
+    setLegacyImage("");
     setFieldErrors({});
     setFormError("");
   };
@@ -138,7 +155,10 @@ export function LoginPostersPanel({
   const openEdit = (p: LoginPosterData) => {
     setEditingId(p.id);
     setForm(toForm(p));
-    setLinkText(/^https?:\/\//i.test(p.imageUrl) ? p.imageUrl : "");
+    const drive = driveLinkFromImageUrl(p.imageUrl);
+    setDriveLink(drive ?? "");
+    setWebLink(!drive && /^https?:\/\//i.test(p.imageUrl) ? p.imageUrl : "");
+    setLegacyImage(p.imageUrl.startsWith("/uploads/") ? p.imageUrl : "");
     setFieldErrors({});
     setFormError("");
   };
@@ -149,28 +169,13 @@ export function LoginPostersPanel({
     setFormError("");
   };
 
-  const upload = async (file: File) => {
-    setUploading(true);
-    setFormError("");
-    try {
-      const body = new FormData();
-      body.append("file", file);
-      const res = await fetch("/api/upload/poster", { method: "POST", body });
-      const json = await res.json();
-      if (!res.ok || !json.imageUrl) throw new Error(json.error || "Upload failed");
-      set("imageUrl", json.imageUrl);
-      setLinkText("");
-      setFieldErrors((e) => ({ ...e, imageUrl: [] }));
-    } catch (err) {
-      setFormError(err instanceof Error ? err.message : "Upload failed");
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  };
-
   const save = () => {
-    const input: PosterInput = { ...form };
+    const wanted = driveLink.trim() ? driveCheck : webCheck;
+    if (wanted.status === "error") {
+      setFormError("Fix the image link first, or clear it.");
+      return;
+    }
+    const input: PosterInput = { ...form, imageUrl };
     startTransition(async () => {
       const result =
         editingId === "new" ? await createPoster(input) : await updatePoster(editingId as string, input);
@@ -238,44 +243,9 @@ export function LoginPostersPanel({
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-[220px_minmax(0,1fr)] lg:gap-8">
-            {/* Preview + image upload */}
+            {/* Preview */}
             <div className="mx-auto w-full max-w-[220px] space-y-3 md:mx-0">
-              <PosterPreview form={form} />
-              <input
-                ref={fileRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="sr-only"
-                id="poster-image"
-                onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
-              />
-              <label htmlFor="poster-image" className="ds-btn ds-btn-outline w-full">
-                {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-                {uploading ? "Uploading…" : form.imageUrl ? "Replace image" : "Upload image"}
-              </label>
-              <div className="flex items-center gap-2 text-2xs font-semibold uppercase tracking-wider text-muted-foreground">
-                <span className="h-px flex-1 bg-border" />
-                or
-                <span className="h-px flex-1 bg-border" />
-              </div>
-              <input
-                className="ds-field"
-                inputMode="url"
-                aria-label="Image link"
-                placeholder="Paste an https:// image link"
-                value={linkText}
-                onChange={(e) => {
-                  setLinkText(e.target.value);
-                  set("imageUrl", e.target.value.trim());
-                }}
-              />
-              {err("imageUrl") ? (
-                <p className="text-xs font-medium text-destructive">{err("imageUrl")}</p>
-              ) : (
-                <p className="text-2xs text-muted-foreground">
-                  Use either an upload (JPG, PNG or WebP, up to 8 MB) or a link, not both. Portrait works best.
-                </p>
-              )}
+              <PosterPreview form={form} imageSrc={imageSrc} />
             </div>
 
             {/* Fields */}
@@ -318,6 +288,44 @@ export function LoginPostersPanel({
                 />
               </Field>
 
+              <div className="sm:col-span-2">
+                <label htmlFor="poster-drive-link" className="ds-label">
+                  Google Drive link
+                </label>
+                <TileImageUrlField
+                  id="poster-drive-link"
+                  value={driveLink}
+                  onChange={setDriveLink}
+                  check={driveCheck}
+                  required={false}
+                  className="ds-field"
+                  placeholder="https://drive.google.com/file/d/…/view"
+                  hint="Share the image in Drive with “Anyone with the link”, then paste its Share link. Used first when both boxes are filled."
+                />
+              </div>
+
+              <div className="sm:col-span-2">
+                <label htmlFor="poster-web-link" className="ds-label">
+                  Web image link
+                </label>
+                <TileImageUrlField
+                  id="poster-web-link"
+                  value={webLink}
+                  onChange={setWebLink}
+                  check={webCheck}
+                  required={false}
+                  disabled={!!driveLink.trim()}
+                  className="ds-field disabled:opacity-50"
+                  placeholder="https://example.com/poster.jpg"
+                  hint={
+                    driveLink.trim()
+                      ? "Not used while a Google Drive link is filled in."
+                      : "A direct image address (right-click a picture, then Copy image address). Portrait works best."
+                  }
+                />
+                {err("imageUrl") && <p className="mt-1 text-xs font-medium text-destructive">{err("imageUrl")}</p>}
+              </div>
+
               <label className="flex cursor-pointer items-center gap-2.5 text-sm sm:col-span-2">
                 <input
                   type="checkbox"
@@ -331,7 +339,7 @@ export function LoginPostersPanel({
               {formError && <p className="text-sm font-medium text-destructive sm:col-span-2">{formError}</p>}
 
               <div className="flex gap-2 sm:col-span-2">
-                <button type="button" onClick={save} disabled={pending || uploading} className="ds-btn ds-btn-primary ds-btn-lg">
+                <button type="button" onClick={save} disabled={pending || chosen.status === "checking"} className="ds-btn ds-btn-primary ds-btn-lg">
                   {pending && <Loader2 className="h-4 w-4 animate-spin" />}
                   {editingId === "new" ? "Add poster" : "Save changes"}
                 </button>
@@ -374,7 +382,8 @@ export function LoginPostersPanel({
               <img
                 src={p.imageUrl}
                 alt=""
-                className="h-20 w-16 shrink-0 rounded-xl border border-border object-cover sm:h-24 sm:w-20"
+                onError={(e) => (e.currentTarget.style.visibility = "hidden")}
+                className="h-20 w-16 shrink-0 rounded-xl border border-border bg-muted object-cover sm:h-24 sm:w-20"
               />
               <div className="min-w-0 flex-1 basis-40 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
