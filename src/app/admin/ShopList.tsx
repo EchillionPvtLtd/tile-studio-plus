@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { toggleSubscription, updateQuota, deleteShop } from "@/actions/admin";
-import { Search, Store, Power, Edit3, X, Check, ShieldCheck, UserPlus, ArrowUpDown, Trash2, AlertTriangle, ExternalLink, Box, Eye, FileText } from "lucide-react";
+import { Search, Store, Power, Edit3, X, Check, ShieldCheck, UserPlus, ArrowUpDown, Trash2, AlertTriangle, Eye, FileText } from "lucide-react";
 import { ShopDetailsModal } from "./ShopDetailsModal";
 import { EmptyState } from "@/components/dashboard";
 import {
@@ -53,7 +52,6 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
     const t = setTimeout(() => setNotice(null), 8000);
     return () => clearTimeout(t);
   }, [notice]);
-  const router = useRouter();
 
   // Shop Details (View, Edit & Update) modal state
   const [detailsShop, setDetailsShop] = useState<any | null>(null);
@@ -65,6 +63,9 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
 
   // Delete shop modal state
   const [deletingShop, setDeletingShop] = useState<{ id: string; name: string } | null>(null);
+
+  // Suspend / reactivate confirmation state
+  const [togglingShop, setTogglingShop] = useState<{ id: string; name: string; active: boolean } | null>(null);
 
   const filteredShops = useMemo(() => {
     return localShops
@@ -102,6 +103,7 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
       setNotice("Could not reach the server. Nothing was changed.");
     } finally {
       setLoadingId(null);
+      setTogglingShop(null);
     }
   };
 
@@ -257,7 +259,6 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
                 <TableHead className="px-5 py-4">License Status</TableHead>
                 <TableHead className="px-5 py-4">Tile Quota</TableHead>
                 <TableHead className="px-5 py-4">Capacity Utilization</TableHead>
-                <TableHead className="px-5 py-4">3D Visualizations</TableHead>
                 <TableHead className="px-5 py-4 text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -318,7 +319,7 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
 
                     {/* Capacity Utilization Meter */}
                     <TableCell className="px-5 py-4 whitespace-nowrap">
-                      <div className="space-y-1.5 w-32">
+                      <div className="space-y-1.5 w-48">
                         <div className="flex justify-between text-2xs font-mono">
                           <span className="text-foreground font-bold">{shop._count.tiles} tiles</span>
                           <span className="text-muted-foreground">{utilPercent}%</span>
@@ -327,16 +328,8 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
                       </div>
                     </TableCell>
 
-                    {/* 3D Visualizations Saved */}
-                    <TableCell className="px-5 py-4 whitespace-nowrap">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-foreground">
-                        <Box className="w-3.5 h-3.5 text-muted-foreground" />
-                        <span>{shop._count?.savedDesigns || 0} designs</span>
-                      </span>
-                    </TableCell>
-
                     {/* Actions */}
-                    <TableCell className="px-5 py-4 whitespace-nowrap text-right">
+                    <TableCell className="pl-5 pr-3 py-4 whitespace-nowrap text-right">
                       <div className="inline-flex items-center justify-end gap-2">
                         {/* Details button: view, edit & update */}
                         <Button
@@ -354,26 +347,9 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
                         </Button>
 
                         <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            const isFs = !!document.fullscreenElement || (typeof window !== "undefined" && sessionStorage.getItem("tileviz_fullscreen") === "true");
-                            const target = isFs ? `/visualizer?shopId=${shop.id}&fullscreen=true` : `/visualizer?shopId=${shop.id}`;
-                            if (isFs) sessionStorage.setItem("tileviz_fullscreen", "true");
-                            router.push(target);
-                          }}
-                          className="h-8 w-8 p-0 rounded-full text-muted-foreground hover:text-foreground"
-                          title="Test Showroom 3D Visualizer"
-                        >
-                          <ExternalLink className="w-3.5 h-3.5" />
-                        </Button>
-
-                        <Button
                           variant={shop.subscriptionActive ? "outline" : "default"}
                           size="sm"
-                          onClick={() => handleToggleSub(shop.id, shop.subscriptionActive)}
+                          onClick={() => setTogglingShop({ id: shop.id, name: shop.shopName || shop.email, active: shop.subscriptionActive })}
                           disabled={loadingId === shop.id}
                           className="h-8 rounded-full text-xs font-bold"
                         >
@@ -397,7 +373,7 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
               })}
               {filteredShops.length === 0 && (
                 <TableRow className="hover:bg-transparent">
-                  <TableCell colSpan={6} className="px-5 py-14 text-center text-xs text-muted-foreground">
+                  <TableCell colSpan={5} className="px-5 py-14 text-center text-xs text-muted-foreground">
                     <p className="text-sm font-semibold text-foreground">No showrooms match</p>
                     <p className="mt-1">
                       {search.trim() ? `Nothing found for "${search.trim()}". ` : ""}
@@ -472,6 +448,50 @@ export function ShopList({ shops, plans, onOpenProvisionModal }: ShopListProps) 
               className="rounded-xl text-xs font-bold"
             >
               Save Quota
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suspend / Reactivate Confirmation Modal (shadcn Dialog) */}
+      <Dialog open={!!togglingShop} onOpenChange={(open) => !open && !loadingId && setTogglingShop(null)}>
+        <DialogContent className="max-w-sm rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-sm font-bold">
+              <Power className={`w-4 h-4 ${togglingShop?.active ? "text-destructive" : "text-foreground"}`} />
+              <span>{togglingShop?.active ? "Suspend showroom" : "Reactivate showroom"}</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground leading-relaxed">
+              {togglingShop?.active ? (
+                <>
+                  Suspend <strong className="text-foreground">{togglingShop?.name}</strong>? Their showroom and visualizer will stop working until you reactivate it.
+                </>
+              ) : (
+                <>
+                  Reactivate <strong className="text-foreground">{togglingShop?.name}</strong>? Their showroom and visualizer will work again straight away.
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-border">
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setTogglingShop(null)}
+              disabled={loadingId === togglingShop?.id}
+              className="rounded-xl text-xs font-semibold"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant={togglingShop?.active ? "destructive" : "default"}
+              onClick={() => togglingShop && handleToggleSub(togglingShop.id, togglingShop.active)}
+              disabled={loadingId === togglingShop?.id}
+              className="rounded-xl text-xs font-bold"
+            >
+              {loadingId === togglingShop?.id ? "Saving…" : togglingShop?.active ? "Suspend" : "Reactivate"}
             </Button>
           </DialogFooter>
         </DialogContent>
