@@ -127,7 +127,7 @@ export function AdminSidebar({
           onKeyDown={(e) => {
             if (e.key === "Escape" || e.key === "Enter") setIsMobileOpen(false);
           }}
-          className="fixed inset-0 z-40 bg-black/75 backdrop-blur-xs transition-opacity lg:hidden"
+          className="fixed inset-0 z-40 bg-black/75 backdrop-blur-xs transition-opacity xl:hidden"
         />
       )}
 
@@ -136,9 +136,9 @@ export function AdminSidebar({
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col bg-sidebar border-r border-sidebar-foreground/[0.07] text-sidebar-foreground select-none transition-all duration-200 ease-in-out",
           // Mobile responsive slide-over drawer
-          isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full xl:translate-x-0",
           // Desktop width: 272px standard or 72px icon-rail collapsed
-          isSidebarCollapsed ? "lg:w-[72px]" : "lg:w-[272px] w-[272px]"
+          isSidebarCollapsed ? "xl:w-[72px]" : "xl:w-[272px] w-[272px]"
         )}
       >
         {/* ── 1. HEADER & BRAND AREA ──────────────────────────────── */}
@@ -149,7 +149,7 @@ export function AdminSidebar({
               <button
                 type="button"
                 onClick={() => setIsSidebarCollapsed(true)}
-                className="absolute top-3 right-3 hidden lg:flex p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-foreground/[0.06] transition-colors cursor-pointer z-10"
+                className="absolute top-3 right-3 hidden xl:flex p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-foreground/[0.06] transition-colors cursor-pointer z-10"
                 title="Collapse sidebar"
               >
                 <PanelLeftClose className="h-4 w-4" />
@@ -159,7 +159,7 @@ export function AdminSidebar({
               <button
                 type="button"
                 onClick={() => setIsMobileOpen(false)}
-                className="absolute top-3 right-3 flex lg:hidden p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-foreground/[0.06] transition-colors cursor-pointer z-10"
+                className="absolute top-3 right-3 flex xl:hidden p-1.5 rounded-lg text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-foreground/[0.06] transition-colors cursor-pointer z-10"
                 title="Close drawer"
               >
                 <X className="h-4 w-4" />
