@@ -270,9 +270,9 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Shop Name */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2">
             <label className="ds-label">
               Shop Name <span className="text-destructive">*</span>
             </label>
@@ -450,7 +450,7 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
 
           {/* Shop Description */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2">
             <label className="ds-label">
               Shop Description (Optional)
             </label>
@@ -484,9 +484,9 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Address Line 1 */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2">
             <label className="ds-label">
               Address Line 1 <span className="text-destructive">*</span>
             </label>
@@ -505,7 +505,7 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
 
           {/* Address Line 2 */}
-          <div className="md:col-span-2">
+          <div className="sm:col-span-2">
             <label className="ds-label">
               Address Line 2 (Optional)
             </label>
@@ -607,7 +607,7 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Admin Name */}
           <div>
             <label className="ds-label">
@@ -678,7 +678,7 @@ export function CreateUserForm({ onCancel, onSuccess, plans }: CreateUserFormPro
           </div>
 
           {/* Temporary Password & Generator */}
-          <div className="md:col-span-2 space-y-2">
+          <div className="sm:col-span-2 space-y-2">
             <div className="flex items-center justify-between">
               <label className="ds-label">
                 Temporary Password <span className="text-destructive">*</span>
