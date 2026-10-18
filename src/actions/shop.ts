@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { getShopSession } from "@/lib/shopSession";
 import { revalidatePath } from "next/cache";
-import { isSafeImageUrl, isSafeLinkUrl } from "@/lib/loginPosters";
-import { resolveTileImageUrl } from "@/lib/tileImageUrl";
+import { isSafeLinkUrl } from "@/lib/loginPosters";
+import { resolveBrandImageUrl, resolveTileImageUrl } from "@/lib/tileImageUrl";
 import { withDownloads, type VisualizerDownloads } from "@/lib/visualizerDownloads";
 import { keepStoredAccess } from "@/lib/visualizerAccess";
 
@@ -187,17 +187,17 @@ export async function updateShopProfileSettings({
     if (shopName !== undefined) updateData.shopName = shopName.trim();
     // A showroom edits its own details, never its own permissions: the visualizer access the administrator set is kept as stored
     if (details !== undefined) updateData.details = keepStoredAccess(user.details, details);
-    for (const [label, value] of [["logo", logoUrl], ["cover", coverPhotoUrl]] as const) {
-      if (value && !isSafeImageUrl(value.trim())) {
-        return { success: false, message: `The ${label} link must be an https:// image link or an uploaded image.` };
-      }
+    // Logo and banner links may be normal image links or Google Drive sharing links (saved as the picture address)
+    for (const [label, value, field] of [["logo", logoUrl, "logoUrl"], ["cover", coverPhotoUrl, "coverPhotoUrl"]] as const) {
+      if (value === undefined) continue;
+      const image = resolveBrandImageUrl(value);
+      if (!image.ok) return { success: false, message: `The ${label} link: ${image.error}` };
+      updateData[field] = image.value;
     }
     if (coverLinkUrl && !isSafeLinkUrl(coverLinkUrl.trim())) {
       return { success: false, message: "The banner link must start with https:// (or http://)." };
     }
     if (coverLinkUrl !== undefined) updateData.coverLinkUrl = coverLinkUrl ? coverLinkUrl.trim() : null;
-    if (logoUrl !== undefined) updateData.logoUrl = logoUrl ? logoUrl.trim() : null;
-    if (coverPhotoUrl !== undefined) updateData.coverPhotoUrl = coverPhotoUrl ? coverPhotoUrl.trim() : null;
 
     if (newPassword && newPassword.trim().length > 0) {
       if (!currentPassword) {
