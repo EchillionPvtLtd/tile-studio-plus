@@ -6,7 +6,7 @@
  *   Unread  the owner's app received it (they saw the pop-up / bell) but they have not pressed Mark as read
  *   Read    the owner pressed Mark as read
  */
-export type NotificationKind = "PAYMENT_REMINDER" | "READ_RECEIPT";
+export type NotificationKind = "PAYMENT_REMINDER" | "READ_RECEIPT" | "SUBSCRIPTION_EXPIRING" | "PLAN_CHANGED";
 export type ReminderStatus = "Sent" | "Unread" | "Read";
 
 export interface NotificationItem {

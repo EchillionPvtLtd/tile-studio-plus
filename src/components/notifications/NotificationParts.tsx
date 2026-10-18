@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, BellRing, Check, CheckCheck, X } from "lucide-react";
+import { Bell, BellRing, Check, CheckCheck, Clock, Sparkles, X } from "lucide-react";
 import { StatusBadge, type StatusTone } from "@/components/dashboard";
 import { ShopAvatar } from "@/components/ShopAvatar";
 import { formatLKR } from "@/lib/utils";
@@ -75,6 +75,8 @@ function Toast({
 
   const n = toast.notification;
   const isReminder = n?.type === "PAYMENT_REMINDER";
+  const isExpiring = n?.type === "SUBSCRIPTION_EXPIRING";
+  const isPlanChanged = n?.type === "PLAN_CHANGED";
   return (
     <div
       onMouseEnter={() => setPaused(true)}
@@ -82,17 +84,36 @@ function Toast({
       className="pointer-events-auto animate-slide-up rounded-2xl border border-border bg-card p-4 text-card-foreground shadow-elevated"
     >
       <div className="flex items-start gap-3">
-        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${isReminder || !n ? "bg-warning-muted text-warning" : "bg-success-muted text-success"}`}>
-          {n && !isReminder ? <CheckCheck className="h-4 w-4" /> : <BellRing className="h-4 w-4" />}
+        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+          isExpiring
+            ? "bg-amber-500/15 text-amber-500"
+            : isPlanChanged
+            ? "bg-emerald-500/15 text-emerald-500"
+            : isReminder || !n
+            ? "bg-warning-muted text-warning"
+            : "bg-success-muted text-success"
+        }`}>
+          {isExpiring ? (
+            <Clock className="h-4 w-4" />
+          ) : isPlanChanged ? (
+            <Sparkles className="h-4 w-4" />
+          ) : n && !isReminder ? (
+            <CheckCheck className="h-4 w-4" />
+          ) : (
+            <BellRing className="h-4 w-4" />
+          )}
         </div>
         <div className="min-w-0 flex-1">
           {n ? (
             <>
-              <p className="text-xs font-bold text-foreground">{isReminder ? "Payment reminder" : "Reminder read"}</p>
+              <p className="text-xs font-bold text-foreground">
+                {n.title || (isExpiring ? "Subscription Expiring" : isPlanChanged ? "Subscription Updated" : isReminder ? "Payment reminder" : "Notification")}
+              </p>
               <p className="mt-0.5 text-2xs font-semibold text-muted-foreground">
-                {n.shopName} · {monthLabelOf(n.month)}
+                {n.shopName}
+                {isReminder ? ` · ${monthLabelOf(n.month)}` : ""}
                 {n.amount != null ? ` · ${formatLKR(n.amount)}` : ""}
-                {isReminder && n.dueDate ? ` · due ${formatDay(n.dueDate)}` : ""}
+                {n.dueDate ? ` · due ${formatDay(n.dueDate)}` : ""}
               </p>
               <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed text-muted-foreground">{n.message}</p>
             </>
@@ -104,23 +125,16 @@ function Toast({
           )}
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {onOpen && (
-              <button type="button" onClick={() => { onOpen(); onDismiss(toast.id); }} className="ds-btn ds-btn-sm ds-btn-primary">
-                View
-              </button>
-            )}
-            {n && isReminder && onMarkRead && (
               <button
                 type="button"
-                disabled={busy}
-                onClick={async () => {
-                  setBusy(true);
-                  await onMarkRead(n.id);
+                onClick={() => {
+                  if (n && onMarkRead) void onMarkRead(n.id);
+                  onOpen();
                   onDismiss(toast.id);
                 }}
-                className="ds-btn ds-btn-sm ds-btn-outline"
+                className="ds-btn ds-btn-sm ds-btn-primary"
               >
-                <Check className="h-3 w-3 stroke-[3]" />
-                <span>{busy ? "Saving..." : "Mark as read"}</span>
+                View
               </button>
             )}
           </div>
@@ -167,22 +181,30 @@ function Fact({ label, value, strong }: { label: string; value: string; strong?:
 }
 
 /** A payment reminder as the showroom owner sees it. */
-export function PaymentReminderCard({ n, onMarkRead }: { n: NotificationItem; onMarkRead: (id: string) => Promise<{ success: boolean; message: string }> }) {
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+export function PaymentReminderCard({ n, onMarkRead }: { n: NotificationItem; onMarkRead: (id: string) => Promise<unknown> }) {
   const status = reminderStatusOf(n);
   const unread = !n.readAt;
 
+  useEffect(() => {
+    if (unread && onMarkRead) {
+      // Auto-mark as read as soon as the user opens/views the notification
+      const t = setTimeout(() => {
+        void onMarkRead(n.id);
+      }, 700);
+      return () => clearTimeout(t);
+    }
+  }, [unread, n.id, onMarkRead]);
+
   return (
-    <article className={`rounded-2xl border p-5 shadow-xs ${unread ? "border-warning/40 bg-card" : "border-border bg-card"}`} aria-label={`Payment reminder for ${monthLabelOf(n.month)}`}>
+    <article className="rounded-2xl border border-border bg-card p-5 shadow-xs" aria-label={`Payment reminder for ${monthLabelOf(n.month)}`}>
       <div className="flex items-start gap-3.5">
-        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${unread ? "bg-warning-muted text-warning" : "bg-success-muted text-success"}`}>
-          {unread ? <BellRing className="h-4 w-4" /> : <CheckCheck className="h-4 w-4" />}
+        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success-muted text-success">
+          <CheckCheck className="h-4 w-4" />
         </div>
         <div className="min-w-0 flex-1 space-y-3.5">
           <div className="flex flex-wrap items-center gap-2">
             <h4 className="text-xs font-bold text-foreground">Payment reminder: {monthLabelOf(n.month)}</h4>
-            {unread ? <StatusBadge tone="warning" dot>New</StatusBadge> : <ReminderStatusBadge status={status} />}
+            <ReminderStatusBadge status={n.readAt ? status : "Read"} />
             <span className="text-2xs text-muted-foreground">{timeAgo(n.sentAt)}</span>
           </div>
 
@@ -198,30 +220,64 @@ export function PaymentReminderCard({ n, onMarkRead }: { n: NotificationItem; on
             <p className="whitespace-pre-line text-xs leading-relaxed text-foreground/90">{n.message}</p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {unread ? (
-              <button
-                type="button"
-                disabled={busy}
-                onClick={async () => {
-                  setBusy(true);
-                  setError("");
-                  const res = await onMarkRead(n.id);
-                  setBusy(false);
-                  if (!res.success) setError(res.message);
-                }}
-                className="ds-btn ds-btn-primary"
-              >
-                <Check className="h-3.5 w-3.5 stroke-[3]" />
-                <span>{busy ? "Saving..." : "Mark as Read"}</span>
-              </button>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 text-2xs font-semibold text-success">
-                <CheckCheck className="h-3.5 w-3.5" />
-                Read {formatMoment(n.readAt)}
-              </span>
-            )}
-            {error && <span className="text-2xs font-semibold text-destructive">{error}</span>}
+          <div className="flex items-center gap-1.5 text-2xs font-semibold text-success">
+            <CheckCheck className="h-3.5 w-3.5" />
+            <span>Read{n.readAt ? ` ${formatMoment(n.readAt)}` : ""}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/** A subscription lifecycle notice (expiring soon, upgraded, or downgraded). */
+export function SubscriptionNoticeCard({ n, onMarkRead }: { n: NotificationItem; onMarkRead: (id: string) => Promise<unknown> }) {
+  const unread = !n.readAt;
+  const isExpiring = n.type === "SUBSCRIPTION_EXPIRING";
+
+  useEffect(() => {
+    if (unread && onMarkRead) {
+      // Auto-mark as read as soon as the user opens/views the notification
+      const t = setTimeout(() => {
+        void onMarkRead(n.id);
+      }, 700);
+      return () => clearTimeout(t);
+    }
+  }, [unread, n.id, onMarkRead]);
+
+  return (
+    <article className="rounded-2xl border border-border bg-card p-5 shadow-xs" aria-label={n.title}>
+      <div className="flex items-start gap-3.5">
+        <div className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${
+          isExpiring ? "bg-amber-500/15 text-amber-500" : "bg-emerald-500/15 text-emerald-500"
+        }`}>
+          {isExpiring ? <Clock className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+        </div>
+        <div className="min-w-0 flex-1 space-y-3.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <h4 className="text-xs font-bold text-foreground">{n.title}</h4>
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-2xs font-bold uppercase tracking-wider ${
+              isExpiring ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+            }`}>
+              {isExpiring ? "Deadline Alert" : "Plan Update"}
+            </span>
+            <span className="text-2xs text-muted-foreground">{timeAgo(n.sentAt)}</span>
+          </div>
+
+          <div>
+            <p className="whitespace-pre-line text-xs leading-relaxed text-foreground/90">{n.message}</p>
+          </div>
+
+          {n.dueDate && (
+            <div className="flex items-center justify-between rounded-xl border border-border bg-muted p-3 text-xs">
+              <span className="text-2xs font-semibold uppercase tracking-wider text-muted-foreground">Deadline Date</span>
+              <span className="font-semibold text-foreground font-mono">{formatDay(n.dueDate)}</span>
+            </div>
+          )}
+
+          <div className="flex items-center gap-1.5 text-2xs font-semibold text-success">
+            <CheckCheck className="h-3.5 w-3.5" />
+            <span>Read{n.readAt ? ` ${formatMoment(n.readAt)}` : ""}</span>
           </div>
         </div>
       </div>

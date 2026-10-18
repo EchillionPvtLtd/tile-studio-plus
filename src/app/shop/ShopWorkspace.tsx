@@ -33,7 +33,7 @@ import { StatusBadge, EmptyState, NeumorphicMetricCard } from "@/components/dash
 import { addTile, deleteTile, setVisualizerDownloads, updateShopProfileSettings } from "@/actions/shop";
 import { readDownloads, type VisualizerDownloads } from "@/lib/visualizerDownloads";
 import { useNotificationFeed } from "@/components/notifications/useNotificationFeed";
-import { NotificationBell, NotificationToasts, PaymentReminderCard } from "@/components/notifications/NotificationParts";
+import { NotificationBell, NotificationToasts, PaymentReminderCard, SubscriptionNoticeCard } from "@/components/notifications/NotificationParts";
 import type { NotificationFeed } from "@/lib/notificationTypes";
 import type { SubscriptionPlanItem } from "@/lib/subscriptionPlanTypes";
 import { DEFAULT_SUBSCRIPTION_PLANS } from "@/lib/subscriptionPlanTypes";
@@ -761,9 +761,16 @@ export function ShopWorkspace({
 
   // ── NOTIFICATIONS & ALERTS ──────────────────────────────────────────────
   const [dismissedNotifications, setDismissedNotifications] = useState<string[]>([]);
-  // Payment reminders from the admin: saved in the database, polled live, popped up when they arrive
+  // In-app notifications: payment reminders, expiry warnings, and plan updates
   const feed = useNotificationFeed(initialNotifications);
-  const paymentReminders = feed.notifications.filter((n) => n.type === "PAYMENT_REMINDER");
+  const showroomNotifications = feed.notifications.filter((n) => n.type !== "READ_RECEIPT");
+
+  // Auto-mark notifications as read when the showroom owner views the notifications tab
+  useEffect(() => {
+    if (activeTab === "notifications" && feed.unreadCount > 0) {
+      void feed.markAllRead();
+    }
+  }, [activeTab, feed.unreadCount, feed.markAllRead]);
 
   // Raw notifications: empty by default so only real payment reminders and database notifications appear
   const rawNotifications: {
@@ -2256,8 +2263,8 @@ export function ShopWorkspace({
                       <div className="grid grid-cols-3 gap-3 sm:gap-6 min-w-[700px] lg:min-w-0">
                       {activePlans.map((tier) => {
                         const isCurrent = !!currentMatchedPlan && tier.id === currentMatchedPlan.id;
-
-                        const isDowngrade = !isCurrent && currentPlanPrice > 0 && tier.price < currentPlanPrice;
+                        const isCustom = tier.isCustomPrice || isCustomPlan(tier.name);
+                        const isDowngrade = !isCurrent && !isCustom && currentPlanPrice > 0 && tier.price < currentPlanPrice;
 
                         // A Custom Plan is priced per showroom, so its amount stays masked
                         const displayPrice = tier.isCustomPrice || isCustomPlan(tier.name)
@@ -2474,22 +2481,17 @@ export function ShopWorkspace({
                     <h2 className="ds-section-title">Showroom Notifications</h2>
                     <p className="ds-subtitle">Payment reminders, system updates, storage capacity warnings, and visualizer alerts</p>
                   </div>
-
-                  {feed.unreadCount > 0 && (
-                    <div className="flex items-center shrink-0">
-                      <button type="button" onClick={() => void feed.markAllRead()} className="ds-btn ds-btn-sm ds-btn-outline">
-                        <Check className="h-3.5 w-3.5" />
-                        <span>Mark all as read</span>
-                      </button>
-                    </div>
-                  )}
                 </div>
 
                 <div className="space-y-3">
-                  {/* Payment reminders from the administrator: saved in the database, so they are here whenever the owner signs in */}
-                  {paymentReminders.map((n) => (
-                    <PaymentReminderCard key={n.id} n={n} onMarkRead={feed.markRead} />
-                  ))}
+                  {/* Notifications: payment reminders and subscription updates */}
+                  {showroomNotifications.map((n) =>
+                    n.type === "PAYMENT_REMINDER" ? (
+                      <PaymentReminderCard key={n.id} n={n} onMarkRead={feed.markRead} />
+                    ) : (
+                      <SubscriptionNoticeCard key={n.id} n={n} onMarkRead={feed.markRead} />
+                    )
+                  )}
 
                   {/* System & status alerts */}
                   {activeNotifications.map((n) => (
@@ -2528,7 +2530,7 @@ export function ShopWorkspace({
                     </div>
                   ))}
 
-                  {paymentReminders.length === 0 && activeNotifications.length === 0 && (
+                  {showroomNotifications.length === 0 && activeNotifications.length === 0 && (
                     <div className="ds-card p-12 text-center text-muted-foreground text-xs">
                       No notifications right now. Everything is up to date!
                     </div>

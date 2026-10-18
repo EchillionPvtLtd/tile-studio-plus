@@ -11,6 +11,7 @@ import { removeUnreferencedUploads, uploadUrlsIn } from "@/lib/uploads";
 import { asBillingDay, asDurationMonths, expiryAfterMonths, findPackage, firstBillingDate, isCustomPlan, nextBillingDate } from "@/lib/subscriptionPlans";
 import { getSubscriptionPlans } from "@/lib/subscriptionPlansServer";
 import { VISUALIZER_LABEL, accessStates, planAccessRecord, samePlan, withAccessChange, withPlanDefaults, type VisualizerKind } from "@/lib/visualizerAccess";
+import { notifyPlanChanged } from "@/lib/notifications";
 
 /** An uploaded image path, an https link, or (the upload fallback) a small inline image. Anything else is refused. */
 function cleanImageUrl(value: string | null | undefined): { ok: true; value: string | null } | { ok: false } {
@@ -27,6 +28,7 @@ async function checkAdmin() {
   if (!session || session.role !== "ADMIN") {
     throw new Error("Unauthorized");
   }
+  return session;
 }
 
 const createUserSchema = z.object({
@@ -329,7 +331,7 @@ export async function updateSubscription(
   durationMonths?: number | null,
 ) {
   try {
-    await checkAdmin();
+    const adminSession = await checkAdmin();
     const before = await prisma.user.findUnique({ where: { id: userId }, select: { subscriptionPackage: true, details: true } });
 
     // The package as it is saved in the dashboard now: its price and tile allowance are the saved ones, never the ones
@@ -386,6 +388,10 @@ export async function updateSubscription(
       const startISO = subscriptionStart || todayISO();
       const due = asDate(firstBillingDate(startISO, asBillingDay(billingDay))) ?? new Date();
       await syncInvoiceToPlan(userId, subscriptionPackage, planPrice, due);
+    }
+
+    if (packageChanged && before?.subscriptionPackage) {
+      void notifyPlanChanged(userId, before.subscriptionPackage, subscriptionPackage, adminSession.userId);
     }
     revalidatePath("/admin");
     revalidatePath("/shop");
@@ -485,7 +491,7 @@ export interface UpdateShopDetailsInput {
 
 export async function updateShopDetailsByAdmin(input: UpdateShopDetailsInput) {
   try {
-    await checkAdmin();
+    const adminSession = await checkAdmin();
 
     const { shopId } = input;
     if (!shopId) {
@@ -629,6 +635,10 @@ export async function updateShopDetailsByAdmin(input: UpdateShopDetailsInput) {
       const startISO = updatedUser.subscriptionStart ? updatedUser.subscriptionStart.toISOString().slice(0, 10) : todayISO();
       const due = asDate(firstBillingDate(startISO, asBillingDay(input.billingDay ?? mergedMeta.billingDay))) ?? new Date();
       await syncInvoiceToPlan(shopId, input.subscriptionPackage, planPrice, due);
+    }
+
+    if (input.subscriptionPackage !== undefined && !samePlan(input.subscriptionPackage, shop.subscriptionPackage)) {
+      void notifyPlanChanged(shopId, shop.subscriptionPackage, input.subscriptionPackage, adminSession.userId);
     }
 
     revalidatePath("/admin");
